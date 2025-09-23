@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-   /* config options here */
+   async rewrites() {
+      return [
+         {
+            source: "/v1/:path*",
+            destination: "https://api.k2b6j6c8-3000.asse.devtunnels.ms/:path*",
+         },
+      ];
+   },
+   // This is required to support PostHog trailing slash API requests
+   skipTrailingSlashRedirect: true,
+
    webpack(config) {
       config.module.rules.push({
          test: /\.svg$/,
@@ -16,6 +26,7 @@ const nextConfig: NextConfig = {
       });
       return config;
    },
+
    experimental: {
       turbo: {
          rules: {
