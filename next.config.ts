@@ -5,8 +5,7 @@ const nextConfig: NextConfig = {
       return [
          {
             source: "/v1/:path*",
-            destination:
-               "https://api.fkip-unsri-attendance-test.vercel.app/:path*",
+            destination: "http://192.168.0.105:5000/:path*",
          },
       ];
    },
@@ -28,13 +27,15 @@ const nextConfig: NextConfig = {
       return config;
    },
 
-   turbopack: {
-      rules: {
-         "*.svg": {
-            loaders: ["@svgr/webpack"],
-            as: "*.js",
+   experimental: {
+      turbo: {
+         rules: {
+            "*.svg": {
+               loaders: ["@svgr/webpack"],
+               as: "*.js",
+            },
          },
-      }
+      },
    },
 };
 
