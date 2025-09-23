@@ -1,5 +1,6 @@
 import { buildQueryParams } from "@/utils/apiUtils";
 import axiosInstance from "./axiosInstance";
+import { handleApiError } from "@/utils/handleApiError";
 
 // Fetches all users with optional filters
 export const fetchUsers = async (filters: any) => {
@@ -11,14 +12,18 @@ export const fetchUsers = async (filters: any) => {
       });
       return response.data;
    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Error fetching users");
+      throw handleApiError(error, "Error fetching users");
    }
 };
 
 // Fetch a single user by their ID
 export const fetchUserById = async (userId: number) => {
-   const response = await axiosInstance.get(`/user/${userId}`);
-   return response.data;
+   try {
+      const response = await axiosInstance.get(`/user/${userId}`);
+      return response.data;
+   } catch (error) {
+      throw handleApiError(error, `Error fetching for user ${userId}`);
+   }
 };
 
 // Fetch the attendances for a user by their ID
@@ -30,9 +35,9 @@ export const fetchUserAttendances = async (userId: number, filters: any) => {
       });
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            `Error fetching attendances for user ${userId}`
+      throw handleApiError(
+         error,
+         `Error fetching attendances for user ${userId}`
       );
    }
 };
@@ -43,7 +48,7 @@ export const createUser = async (userData: FormData) => {
       const response = await axiosInstance.post("/user", userData);
       return response.data;
    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Error creating user");
+      throw handleApiError(error, "Error creating user");
    }
 };
 
@@ -58,13 +63,17 @@ export const updateUser = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Error updating user");
+      throw handleApiError(error, "Error updating user");
    }
 };
 
 // Delete a user by their ID
 
 export const deleteUser = async (userId: number | string) => {
-   const response = await axiosInstance.delete(`/user/${userId}`);
-   return response.data;
+   try {
+      const response = await axiosInstance.delete(`/user/${userId}`);
+      return response.data;
+   } catch (error) {
+      throw handleApiError(error, "Error deleting user");
+   }
 };

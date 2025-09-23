@@ -1,5 +1,6 @@
 import { buildQueryParams } from "@/utils/apiUtils";
 import axiosInstance from "./axiosInstance";
+import { handleApiError } from "@/utils/handleApiError";
 
 // Fetch all attendance details (Admin only)
 export const fetchAttendanceDetails = async (filters: any) => {
@@ -10,9 +11,7 @@ export const fetchAttendanceDetails = async (filters: any) => {
       });
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error fetching attendance details"
-      );
+      throw handleApiError(error, "Error fetching attendance details");
    }
 };
 
@@ -24,10 +23,7 @@ export const fetchAttendanceDetailById = async (attendanceDetailId: number) => {
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            "Error fetching attendance detail by ID"
-      );
+      throw handleApiError(error, "Error fetching attendance detail by ID");
    }
 };
 
@@ -46,9 +42,9 @@ export const fetchAttendanceDetailByAttendanceId = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            `Error fetching attendance detail for attendance ${attendanceId}`
+      throw handleApiError(
+         error,
+         `Error fetching attendance detail for attendance ${attendanceId}`
       );
    }
 };
@@ -64,9 +60,7 @@ export const createAttendanceDetail = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error creating attendance detail"
-      );
+      throw handleApiError(error, "Error creating attendance detail");
    }
 };
 
@@ -82,9 +76,7 @@ export const updateAttendanceDetail = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error updating attendance detail"
-      );
+      throw handleApiError(error, "Error updating attendance detail");
    }
 };
 
@@ -98,9 +90,7 @@ export const deleteAttendanceDetail = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error deleting attendance detail"
-      );
+      throw handleApiError(error, "Error deleting attendance detail");
    }
 };
 
@@ -110,9 +100,7 @@ export const userCheckIn = async (checkInData: any) => {
       const response = await axiosInstance.post("/check-in", checkInData);
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error during check-in"
-      );
+      throw handleApiError(error, "Error during check-in");
    }
 };
 
@@ -122,8 +110,6 @@ export const userCheckOut = async (checkOutData: any) => {
       const response = await axiosInstance.post("/check-out", checkOutData);
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error during check-out"
-      );
+      throw handleApiError(error, "Error during check-out");
    }
 };

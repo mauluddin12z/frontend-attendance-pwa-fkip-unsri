@@ -1,5 +1,6 @@
 import { buildQueryParams } from "@/utils/apiUtils";
 import axiosInstance from "./axiosInstance";
+import { handleApiError } from "@/utils/handleApiError";
 
 // Fetch all attendances (Admin only)
 export const fetchAttendances = async (filters: any) => {
@@ -10,9 +11,7 @@ export const fetchAttendances = async (filters: any) => {
       });
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error fetching attendances"
-      );
+      throw handleApiError(error, "Error fetching attendances");
    }
 };
 
@@ -22,9 +21,7 @@ export const fetchAttendanceById = async (attendanceId: number) => {
       const response = await axiosInstance.get(`/attendance/${attendanceId}`);
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error fetching attendance by ID"
-      );
+      throw handleApiError(error, "Error fetching attendance by ID");
    }
 };
 
@@ -40,9 +37,9 @@ export const fetchAttendancesByUserId = async (
       });
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            `Error fetching attendances for user ${userId}`
+      throw handleApiError(
+         error,
+         `Error fetching attendances for user ${userId}`
       );
    }
 };
@@ -53,9 +50,7 @@ export const createAttendance = async (attendanceData: FormData) => {
       const response = await axiosInstance.post("/attendance", attendanceData);
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error creating attendance"
-      );
+      throw handleApiError(error, "Error creating attendance");
    }
 };
 
@@ -71,9 +66,7 @@ export const updateAttendance = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error updating attendance"
-      );
+      throw handleApiError(error, "Error updating attendance");
    }
 };
 
@@ -85,8 +78,6 @@ export const deleteAttendance = async (attendanceId: number | string) => {
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error deleting attendance"
-      );
+      throw handleApiError(error, "Error deleting attendance");
    }
 };

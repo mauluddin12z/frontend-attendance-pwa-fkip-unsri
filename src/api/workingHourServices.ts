@@ -1,5 +1,6 @@
 // services/workingHoursService.ts
 
+import { handleApiError } from "@/utils/handleApiError";
 import axiosInstance from "./axiosInstance";
 import { buildQueryParams } from "@/utils/apiUtils";
 
@@ -12,9 +13,7 @@ export const fetchWorkingHours = async (filters: any = {}) => {
       });
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error fetching working hours"
-      );
+      throw handleApiError(error, "Error fetching working hours");
    }
 };
 
@@ -26,9 +25,9 @@ export const fetchWorkingHourById = async (workingHourId: number | string) => {
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            `Error fetching working hour ${workingHourId}`
+      throw handleApiError(
+         error,
+         `Error fetching working hour ${workingHourId}`
       );
    }
 };
@@ -39,9 +38,7 @@ export const createWorkingHour = async (data: any) => {
       const response = await axiosInstance.post("/working-hour", data);
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message || "Error creating working hour"
-      );
+      throw handleApiError(error, "Error creating working hour");
    }
 };
 
@@ -57,9 +54,9 @@ export const updateWorkingHour = async (
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            `Error updating working hour ${workingHourId}`
+      throw handleApiError(
+         error,
+         `Error updating working hour ${workingHourId}`
       );
    }
 };
@@ -72,9 +69,9 @@ export const deleteWorkingHour = async (workingHourId: number | string) => {
       );
       return response.data;
    } catch (error: any) {
-      throw new Error(
-         error?.response?.data?.message ||
-            `Error deleting working hour ${workingHourId}`
+      throw handleApiError(
+         error,
+         `Error deleting working hour ${workingHourId}`
       );
    }
 };

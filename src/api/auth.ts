@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import axiosInstance from "./axiosInstance";
 import toast from "react-hot-toast";
+import { handleApiError } from "@/utils/handleApiError";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_MY_BACKEND_URL as string;
 
@@ -33,18 +34,18 @@ export const login = async (username: string, password: string) => {
 
       return response;
    } catch (error: any) {
-      if (error.response) {
-         throw error.response.data;
-      } else {
-         throw new Error("Network error or no response received");
-      }
+      throw handleApiError(error, "Network error or no response received");
    }
 };
 
 // Get Session
 export const getSession = async () => {
-   const response = await axiosInstance.get(`/auth/session`);
-   return response;
+   try {
+      const response = await axiosInstance.get(`/auth/session`);
+      return response;
+   } catch (error) {
+      throw handleApiError(error, "Error getting session");
+   }
 };
 
 // Logout user
@@ -53,6 +54,6 @@ export const logout = async (): Promise<void> => {
       await axiosInstance.post(`/auth/logout`, {});
       window.location.href = "/login";
    } catch (error: any) {
-      console.warn("Logout request failed", error.message || error);
+      throw handleApiError(error, "Error logging out");
    }
 };

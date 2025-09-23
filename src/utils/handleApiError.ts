@@ -4,9 +4,19 @@ interface ApiError {
 }
 
 // Utility function to handle API errors
-const handleApiError = (error: any): ApiError => {
-   if (error?.response?.data) {
-      return error.response.data;
+export function handleApiError(
+   error: any,
+   fallbackMessage = "An error occurred"
+) {
+   const errorData = error?.response?.data || {};
+
+   const err: { message: string; details?: any } = {
+      message: errorData.message || fallbackMessage,
+   };
+
+   if (errorData.details) {
+      err.details = errorData.details;
    }
-   return { message: error?.message || "Unknown error occurred" };
-};
+
+   return err;
+}

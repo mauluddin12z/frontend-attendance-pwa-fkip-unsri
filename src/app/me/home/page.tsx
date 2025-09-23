@@ -61,10 +61,7 @@ const Page = () => {
          : "---";
    };
 
-   const { handleCheckIn, isCheckingIn } = useHandleCheckIn(
-      userId,
-      refetchCheckIn
-   );
+   const { handleCheckIn, isCheckingIn } = useHandleCheckIn(refetchCheckIn);
    const { handleCheckOut, isCheckingOut } = useHandleCheckOut(
       checkInData,
       refetchCheckOut

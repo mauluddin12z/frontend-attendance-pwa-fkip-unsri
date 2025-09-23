@@ -1,61 +1,55 @@
 // hooks/useHandleCheckIn.ts
 import { useUserCheckIn } from "@/hooks/useAttendanceDetail";
-import {
-   useCreateAttendance,
-   useAttendanceByUser,
-} from "@/hooks/useAttendance";
-import moment from "moment-timezone";
 import toast from "react-hot-toast";
 
-const TIMEZONE = "Asia/Jakarta";
-const today = moment().tz(TIMEZONE).format("YYYY-MM-DD");
-
-export function useHandleCheckIn(userId?: number, onSuccess?: () => void) {
+export function useHandleCheckIn(onSuccess?: () => void) {
    const { checkIn, isCheckingIn } = useUserCheckIn();
-   const { createAttendance, isCreating } = useCreateAttendance();
-   const { userAttendances: allTodayAttendances } = useAttendanceByUser(
-      userId,
-      {
-         startDate: today,
-         endDate: today,
-         include: "details",
-      }
-   );
-
-   const createAttendanceIfNotExist = async () => {
-      const existingId = allTodayAttendances?.[0]?.attendanceId;
-      if (existingId) return existingId;
-
-      const formData = new FormData();
-      if (userId) formData.append("userId", userId.toString());
-      formData.append("date", today);
-
-      const newAttendance = await createAttendance(formData);
-      return newAttendance?.data?.id;
-   };
 
    const handleCheckIn = async () => {
       const toastId = toast.loading("Checking in...");
+
+      let latitude: string = "";
+      let longitude: string = "";
+
       try {
-         const attendanceId = await createAttendanceIfNotExist();
-         if (!attendanceId) return;
+         if (navigator.geolocation) {
+            try {
+               const position = await new Promise<GeolocationPosition>(
+                  (resolve, reject) => {
+                     navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                     });
+                  }
+               );
+
+               latitude = position.coords.latitude.toString();
+               longitude = position.coords.longitude.toString();
+            } catch (geoError) {
+               console.warn("Geolocation error:", geoError);
+               // Continue with null lat/lng
+            }
+         } else {
+            toast.error("Geolocation is not supported by this browser.", {
+               id: toastId,
+            });
+         }
 
          await checkIn({
-            attendanceId,
-            latitude: "-2.9581962225474805",
-            longitude: "104.75689349",
+            latitude,
+            longitude,
          });
 
          toast.success("Checked in successfully!", { id: toastId });
          onSuccess?.();
-      } catch (error) {
+      } catch (error: any) {
          console.error("Check-in failed:", error);
-         toast.error("Failed to check in", { id: toastId });
+         toast.error(`Check-in failed: ${error.message}`, { id: toastId });
       }
    };
 
    return {
       handleCheckIn,
-      isCheckingIn: isCheckingIn || isCreating,
+      isCheckingIn,
    };
 }
