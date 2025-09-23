@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
       return [
          {
             source: "/v1/:path*",
-            destination: "https://api.k2b6j6c8-3000.asse.devtunnels.ms/:path*",
+            destination:
+               "https://api.fkip-unsri-attendance-test.vercel.app/:path*",
          },
       ];
    },
