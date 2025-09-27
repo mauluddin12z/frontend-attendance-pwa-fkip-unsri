@@ -16,14 +16,14 @@ const CalendarHeader = ({
    onNextMonth,
    isSelectable = true,
 }: CalendarHeaderProps) => {
-   const monthYear = currentDate.toLocaleString("default", {
+   const monthYear = currentDate.toLocaleString("id-ID", {
       month: "long",
       year: "numeric",
    });
 
    return (
       <div
-         className={`flex mb-2 ${
+         className={`flex ${
             isSelectable ? "justify-between" : "justify-center"
          } items-center`}
       >

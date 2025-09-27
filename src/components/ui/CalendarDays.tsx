@@ -73,7 +73,7 @@ const CalendarDays = ({
       >
          {days.map((day, index) => {
             const isActive = isSameDate(day, activeDate);
-            const dayName = day.toLocaleDateString("en-US", {
+            const dayName = day.toLocaleDateString("id-ID", {
                weekday: "short",
             });
             const dayOfMonth = String(day.getDate()).padStart(2, "0");

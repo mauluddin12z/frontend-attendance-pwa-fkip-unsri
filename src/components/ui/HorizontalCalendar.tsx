@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CalendarDays from "./CalendarDays";
-import CalendarHeader from "./CalendarHeader";
+import CalendarMonths from "./CalendarMonths";
 
 type CalendarProps = {
    onDateChange?: (date: Date) => void;
@@ -37,9 +37,9 @@ const Calendar = ({
    };
 
    return (
-      <div className="container mx-auto">
+      <div className="container mx-auto flex flex-col gap-2">
          {isHeader && (
-            <CalendarHeader
+            <CalendarMonths
                currentDate={currentDate}
                onPrevMonth={isSelectable ? handlePrevMonth : undefined}
                onNextMonth={isSelectable ? handleNextMonth : undefined}

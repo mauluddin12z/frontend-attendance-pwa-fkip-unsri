@@ -81,7 +81,10 @@ export default function SwipeToAction({
          ref={sliderRef}
          className={`relative w-full h-12 rounded-lg shadow-lg overflow-hidden select-none transition-opacity duration-200 bg-${
             type === "checkin" ? "blue-400" : "red-400"
-         } ${disabled ? "cursor-not-allowed brightness-[180%]" : ""}`}
+         } ${
+            disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
+         }`}
+         aria-disabled={disabled}
          onTouchStart={handleStart}
          onTouchMove={handleMove}
          onTouchEnd={handleEnd}

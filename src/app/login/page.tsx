@@ -73,10 +73,10 @@ export default function Page() {
                <LoginVector />
             </div>
             <div className="sm:mx-auto sm:w-full sm:max-w-3xs b">
-               <div className="my-2 h-4">
+               <div className="my- h-4">
                   {/* Show error or success message */}
                   {errors.message && (
-                     <div className="text-center text-base text-red-600">
+                     <div className="text-center text-base text-red-600 text-nowrap">
                         <p>{errors.message}</p>
                      </div>
                   )}

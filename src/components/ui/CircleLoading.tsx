@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function LoadingButton() {
+export default function CircleLoading() {
    return (
       <div className="flex items-center justify-center">
          <div className="flex justify-center items-center">

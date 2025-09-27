@@ -23,4 +23,30 @@ export interface Attendance {
    date: string;
    attendanceStatusId: number;
    notes: string;
+   attendanceStatus?: AttendanceStatus;
+   attendanceDetails?: AttendanceDetail[];
+}
+export interface AttendanceDetail {
+   id: number;
+   type: "checkIn" | "checkOut";
+   timestamp: string;
+   latitude: string;
+   longitude: string;
+}
+export interface AttendanceStatus {
+   id: number;
+   name: string;
+}
+
+export interface SettingsGeofence {
+   name: string;
+   latitude: number;
+   longitude: number;
+   radiusMeters: number;
+   isActive: boolean;
+}
+
+export interface UserLocation {
+   lat: number;
+   lng: number;
 }
