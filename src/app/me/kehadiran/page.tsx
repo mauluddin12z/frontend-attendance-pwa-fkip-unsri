@@ -1,160 +1,151 @@
 "use client";
 import React, { useState, useMemo, useCallback } from "react";
 import MobileLayout from "@/components/layout/mobile/MobileLayout";
-import CalendarMonths from "@/components/ui/CalendarMonths";
-import { useAttendanceByUser } from "@/hooks/useAttendance";
+import CalendarMonths from "@/components/ui/Calendar/CalendarMonths";
+import { useAttendanceByUser } from "@/hooks/useAttendances";
 import { useAuth } from "@/context/AuthContext";
 import { Attendance } from "@/types";
-import AttendanceList from "@/components/ui/AttendanceList";
-import AttendanceFilter from "@/components/ui/AttendanceFilter";
-import AttendanceGrid from "@/components/ui/AttendanceGrid";
-import ViewTypeToggle from "@/components/ui/ViewTypeToggle";
+import AttendanceList from "@/components/ui/Attendance/AttendanceList";
+import AttendanceFilter from "@/components/ui/Attendance/AttendanceFilter";
+import AttendanceGrid from "@/components/ui/Attendance/AttendanceGrid";
+import ViewTypeToggle from "@/components/ui/Attendance/ViewTypeToggle";
 import getMonthStartAndEnd from "@/utils/getMonthStartAndEnd";
-import NavigationButton from "@/components/ui/NavigationButton";
-import { useRouter } from "next/navigation";
-import SortToggle from "@/components/ui/SortToggle";
+import SortToggle from "@/components/ui/Attendance/SortToggle";
 
 export default function Page() {
-  const { user } = useAuth();
-  const userId = user?.id;
-  const router = useRouter();
+   const { user } = useAuth();
+   const userId = user?.id;
 
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [filter, setFilter] = useState("semua");
-  const [viewType, setViewType] = useState<"list" | "grid">("list");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+   const [currentDate, setCurrentDate] = useState(new Date());
+   const [filter, setFilter] = useState<
+      "semua" | "hadir" | "tidak_hadir" | "izin" | "lainnya"
+   >("semua");
+   const [viewType, setViewType] = useState<"list" | "grid">("list");
+   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  const goToRoute = (path: string) => () => router.push(path);
+   // Change month handler
+   const changeMonth = useCallback((offset: number) => {
+      setCurrentDate((prev) => {
+         const newDate = new Date(prev);
+         newDate.setMonth(newDate.getMonth() + offset);
+         return newDate;
+      });
+   }, []);
 
-  const changeMonth = (offset: number) => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setMonth(newDate.getMonth() + offset);
-      return newDate;
-    });
-  };
+   // Attendance fetch params based on currentDate
+   const attendanceFilterParams = useMemo(() => {
+      const { start, end } = getMonthStartAndEnd(currentDate);
+      return {
+         startDate: start.format("YYYY-MM-DD"),
+         endDate: end.format("YYYY-MM-DD"),
+         include: "details,status",
+      };
+   }, [currentDate]);
 
-  const handlePrevMonth = () => changeMonth(-1);
-  const handleNextMonth = () => changeMonth(1);
+   // Fetch user attendance
+   const { userAttendances, isLoading: isLoadingAttendance } =
+      useAttendanceByUser(userId, attendanceFilterParams);
 
-  // Attendance filter params for fetching
-  const attendanceFilterParams = useMemo(() => {
-    const { start, end } = getMonthStartAndEnd(currentDate);
-    return {
-      startDate: start.format("YYYY-MM-DD"),
-      endDate: end.format("YYYY-MM-DD"),
-      include: "details,status",
-    };
-  }, [currentDate]);
-
-  const { userAttendances, isLoading: isLoadingAttendance } = useAttendanceByUser(
-    userId,
-    attendanceFilterParams
-  );
-
-  // Generate array of days in current month, sorted by sortOrder
-  const daysInMonth = useMemo(() => {
-    const { start, end } = getMonthStartAndEnd(currentDate);
-    const days = [];
-    let day = start.clone();
-    while (day.isBefore(end) || day.isSame(end, "day")) {
-      days.push(day.format("YYYY-MM-DD"));
-      day = day.add(1, "day");
-    }
-    return sortOrder === "desc" ? days.reverse() : days;
-  }, [currentDate, sortOrder]);
-
-  const getAttendanceForDay = useCallback(
-    (date: string) =>
-      userAttendances?.data?.find((att: Attendance) => att.date === date),
-    [userAttendances]
-  );
-
-  // Filter days based on filter state and viewType
-  const filteredDays = useMemo(() => {
-    if (viewType === "grid") {
-      return daysInMonth;
-    }
-
-    return daysInMonth.filter((date) => {
-      const attendance = getAttendanceForDay(date);
-
-      if (filter === "semua") return true;
-
-      const status = attendance?.attendanceStatus?.name;
-      if (!status) return false;
-
-      switch (filter) {
-        case "hadir":
-          return status === "Hadir";
-        case "tidak_hadir":
-          return status === "Tidak Hadir";
-        case "lainnya":
-          return status !== "Hadir" && status !== "Tidak Hadir";
-        default:
-          return false;
+   // Generate days in current month sorted by sortOrder
+   const daysInMonth = useMemo(() => {
+      const { start, end } = getMonthStartAndEnd(currentDate);
+      const days: string[] = [];
+      let day = start.clone();
+      while (day.isBefore(end) || day.isSame(end, "day")) {
+         days.push(day.format("YYYY-MM-DD"));
+         day = day.add(1, "day");
       }
-    });
-  }, [filter, daysInMonth, getAttendanceForDay, viewType]);
+      return sortOrder === "desc" ? days.reverse() : days;
+   }, [currentDate, sortOrder]);
 
-  return (
-    <MobileLayout>
-      {/* Header Section */}
-      <div className="flex justify-between items-center z-[11] px-4 pt-6 pb-2">
-        <NavigationButton direction="prev" onClick={goToRoute("/me/home")} />
-        <div className="font-semibold text-xl flex-1 ml-4">Absensi</div>
-        <NavigationButton direction="next" onClick={goToRoute("/me/leave")} />
-      </div>
+   // Memoized function to get attendance for a given day
+   const getAttendanceForDay = useCallback(
+      (date: string) =>
+         userAttendances?.data?.find((att: Attendance) => att.date === date),
+      [userAttendances]
+   );
 
-      <section className="mt-2 px-4">
-        <div className="flex justify-between items-center">
-          <div className="font-semibold">Absensi Bulanan</div>
-          <ViewTypeToggle viewType={viewType} setViewType={setViewType} />
-        </div>
-      </section>
+   // Filter days based on filter
+   const filteredDays = useMemo(() => {
+      if (filter === "semua") return daysInMonth;
 
-      {/* Calendar Header */}
-      <section className="mt-4 px-4">
-        <div className="flex flex-col bg-white border border-gray-200 rounded-lg">
-          <CalendarMonths
-            currentDate={currentDate}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-          />
-        </div>
-      </section>
+      return daysInMonth.filter((date) => {
+         const attendance = getAttendanceForDay(date);
+         const status = attendance?.attendanceStatus?.name;
 
-      {/* Attendance Filter */}
-      <section className="mt-2 px-4 flex gap-2">
-        {viewType === "list" && (
-          <>
-            <SortToggle sortOrder={sortOrder} setSortOrder={setSortOrder} />
-            <AttendanceFilter filter={filter} setFilter={setFilter} />
-          </>
-        )}
-      </section>
+         if (!status) return false;
 
-      {/* Attendance List */}
-      <section className="mt-2 px-4">
-        {viewType === "list" && (
-          <AttendanceList
-            isLoadingAttendance={isLoadingAttendance}
-            filteredDays={filteredDays}
-            getAttendanceForDay={getAttendanceForDay}
-          />
-        )}
-      </section>
+         switch (filter) {
+            case "hadir":
+               return status === "Hadir";
+            case "tidak_hadir":
+               return status === "Tidak Hadir";
+            case "izin":
+               return status === "Izin";
+            case "lainnya":
+               return status !== "Hadir" && status !== "Tidak Hadir";
+            default:
+               return false;
+         }
+      });
+   }, [filter, daysInMonth, getAttendanceForDay]);
 
-      {/* Attendance Grid */}
-      <section className="mt-2 px-4">
-        {viewType === "grid" && (
-          <AttendanceGrid
-            isLoadingAttendance={isLoadingAttendance}
-            filteredDays={filteredDays}
-            getAttendanceForDay={getAttendanceForDay}
-          />
-        )}
-      </section>
-    </MobileLayout>
-  );
+   return (
+      <MobileLayout>
+         {/* Header */}
+         <header className="flex justify-between items-center z-[11] px-4 pt-6 pb-2">
+            <h1 className="font-semibold text-2xl">Absensi</h1>
+         </header>
+
+         {/* Monthly Attendance Title and ViewType Toggle */}
+         <section className="mt-2 px-4 flex justify-between items-center">
+            <h2 className="font-semibold text-base">Absensi Bulanan</h2>
+            <ViewTypeToggle viewType={viewType} setViewType={setViewType} />
+         </section>
+
+         {/* Main Content */}
+         <section className="mt-4 px-4">
+            <div className="rounded-2xl bg-white overflow-clip py-6">
+               {/* Calendar Header */}
+               <section className="px-4">
+                  <div className="flex flex-col bg-white border border-gray-200 rounded-lg">
+                     <CalendarMonths
+                        currentDate={currentDate}
+                        onPrevMonth={() => changeMonth(-1)}
+                        onNextMonth={() => changeMonth(1)}
+                     />
+                  </div>
+               </section>
+
+               {/* Filters & Sorting (only for list view) */}
+               {viewType === "list" && (
+                  <section className="mt-4 px-4 flex gap-2">
+                     <SortToggle
+                        sortOrder={sortOrder}
+                        setSortOrder={setSortOrder}
+                     />
+                     <AttendanceFilter filter={filter} setFilter={setFilter} />
+                  </section>
+               )}
+
+               {/* Attendance Display */}
+               <section className="mt-4 px-4">
+                  {viewType === "list" ? (
+                     <AttendanceList
+                        isLoadingAttendance={isLoadingAttendance}
+                        filteredDays={filteredDays}
+                        getAttendanceForDay={getAttendanceForDay}
+                     />
+                  ) : (
+                     <AttendanceGrid
+                        isLoadingAttendance={isLoadingAttendance}
+                        getAttendanceForDay={getAttendanceForDay}
+                        currentDate={currentDate}
+                     />
+                  )}
+               </section>
+            </div>
+         </section>
+      </MobileLayout>
+   );
 }

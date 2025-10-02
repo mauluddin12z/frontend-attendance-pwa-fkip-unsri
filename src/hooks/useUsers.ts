@@ -7,6 +7,7 @@ import {
    updateUser,
    deleteUser,
    createUser,
+   updateUserProfile,
 } from "@/api/userServices";
 
 // SWR Hook for fetching all users with optional filters
@@ -111,6 +112,31 @@ export const useUpdateUser = () => {
          const response = await updateUser(userId, updatedData);
          setIsUpdating(false);
          return response; // Return the updated user data
+      } catch (err: any) {
+         setError(err);
+         setIsUpdating(false);
+         throw err;
+      }
+   };
+
+   return {
+      updateUser: update,
+      isUpdating,
+      error,
+   };
+};
+// Hook for updating an existing user
+export const useUpdateUserProfile = () => {
+   const [isUpdating, setIsUpdating] = useState(false);
+   const [error, setError] = useState<Error | null>(null);
+
+   const update = async (userId: number | string, updatedData: FormData) => {
+      setIsUpdating(true);
+      setError(null);
+      try {
+         const response = await updateUserProfile(userId, updatedData);
+         setIsUpdating(false);
+         return response;
       } catch (err: any) {
          setError(err);
          setIsUpdating(false);

@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 interface AttendanceFilterProps {
-   filter: string;
-   setFilter: React.Dispatch<React.SetStateAction<string>>;
+   filter: FilterValue;
+   setFilter: React.Dispatch<React.SetStateAction<FilterValue>>;
 }
+
+type FilterValue = "semua" | "hadir" | "tidak_hadir" | "izin" | "lainnya";
 
 const FILTER_OPTIONS = [
    {
@@ -26,9 +28,15 @@ const FILTER_OPTIONS = [
       textColor: "text-white",
    },
    {
+      value: "izin",
+      label: "Izin",
+      bgColor: "bg-yellow-400",
+      textColor: "text-white",
+   },
+   {
       value: "lainnya",
       label: "Lainnya",
-      bgColor: "bg-yellow-400",
+      bgColor: "bg-blue-400",
       textColor: "text-black",
    },
 ];
@@ -43,7 +51,7 @@ const AttendanceFilter: React.FC<AttendanceFilterProps> = ({
             {FILTER_OPTIONS.map(({ value, label, bgColor, textColor }) => {
                const isActive = filter === value;
                const baseStyle =
-                  "cursor-pointer select-none px-5 py-2 rounded-lg font-medium text-sm transition duration-300 ease-in-out flex items-center justify-center";
+                  "cursor-pointer select-none px-5 py-2 rounded-lg font-medium text-sm transition duration-300 ease-in-out flex items-center justify-center lowercase";
 
                const activeStyle = `${bgColor} ${textColor} shadow-md`;
                const inactiveStyle =
@@ -52,7 +60,7 @@ const AttendanceFilter: React.FC<AttendanceFilterProps> = ({
                return (
                   <button
                      key={value}
-                     onClick={() => setFilter(value)}
+                     onClick={() => setFilter(value as FilterValue)}
                      aria-pressed={isActive}
                      className={`${baseStyle} ${
                         isActive ? activeStyle : inactiveStyle

@@ -1,25 +1,35 @@
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
 
-// Reusable NavigationButton component
-const NavigationButton = ({
-   direction,
-   onClick,
-}: {
+interface NavigationButtonProps {
+   bgColor?: string;
+   borderColor?: string;
    direction: "prev" | "next";
    onClick: () => void;
+   className?: string;
+}
+
+const NavigationButton: React.FC<NavigationButtonProps> = ({
+   bgColor = "bg-white",
+   borderColor= "border-gray-200",
+   direction,
+   onClick,
+   className = "",
 }) => {
+   const icon = direction === "prev" ? faArrowLeft : faArrowRight;
+   const label = direction === "prev" ? "Previous" : "Next";
+
    return (
       <button
+         type="button"
          onClick={onClick}
-         className="p-2 bg-gray-200 rounded-lg text-gray-600"
+         aria-label={label}
+         className={`p-2 ${bgColor} border ${borderColor} rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition ${className}`}
       >
-         <FontAwesomeIcon
-            icon={direction === "prev" ? faAngleLeft : faAngleRight}
-            size="lg"
-         />
+         <FontAwesomeIcon icon={icon} size="lg" />
       </button>
    );
 };
 
-export default NavigationButton;
+export default React.memo(NavigationButton);

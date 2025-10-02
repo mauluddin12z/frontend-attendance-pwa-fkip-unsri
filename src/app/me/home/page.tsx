@@ -1,77 +1,83 @@
 "use client";
 
-import React, { useMemo } from "react";
-import moment from "moment-timezone";
+import React, { useMemo, useCallback } from "react";
 import MobileLayout from "@/components/layout/mobile/MobileLayout";
-import SwipeToAction from "@/components/ui/SwipeToAction";
-import Calendar from "@/components/ui/HorizontalCalendar";
+import SwipeToAction from "@/components/ui/Home/SwipeToAction";
+import Calendar from "@/components/ui/Calendar/HorizontalCalendar";
 import CheckInIcon from "@/assets/checkInIcon";
 import CheckOutIcon from "@/assets/checkOutIcon";
 import TimeIcon from "@/assets/timeIcon";
 import { useAuth } from "@/context/AuthContext";
-import { useAttendanceByUser } from "@/hooks/useAttendance";
+import { useAttendanceByUser } from "@/hooks/useAttendances";
 import { useHandleCheckIn } from "@/hooks/useHandleCheckIn";
 import { useHandleCheckOut } from "@/hooks/useHandleCheckOut";
-import { useWorkingHours } from "@/hooks/useWorkingHour";
+import { useWorkingHours } from "@/hooks/useWorkingHours";
 import { useSettingsGeofences } from "@/hooks/useSettingsGeofences";
 import { formatTime } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import AttendanceCard from "@/components/ui/AttendanceCard";
-import ScheduledTimeCard from "@/components/ui/ScheduledTimeCard";
-import LocationInfo from "@/components/ui/LocationInfo";
-import { TIMEZONE } from "@/utils/constants";
+import AttendanceCard from "@/components/ui/Home/AttendanceCard";
+import LocationInfo from "@/components/ui/Home/LocationInfo";
+import customMoment from "@/utils/customMoment";
+import { useHolidays } from "@/hooks/useHolidays";
+import { Holiday } from "@/types";
 
 const Page = () => {
-   const today = useMemo(() => moment().tz(TIMEZONE).format("YYYY-MM-DD"), []);
+   // Common Values
+   const today = useMemo(() => customMoment().format("YYYY-MM-DD"), []);
+   const todayDayOfWeek = useMemo(() => customMoment().day(), []);
 
+   // User
    const { user, isLoading: isLoadingUser } = useAuth();
    const userId = user?.id;
 
-   // Filters
-   const workingHourFilter = useMemo(
-      () => ({
-         dayOfWeek: moment().tz(TIMEZONE).day(),
-      }),
-      []
+   // Holidays
+   const { holidays } = useHolidays();
+   const isTodayHoliday = useMemo(() => {
+      if (!holidays?.data) return false;
+      return holidays.data.some((holiday: Holiday) => holiday.date === today);
+   }, [holidays, today]);
+
+   // Working Hours
+   // Filter depends on day of week and skip if holiday
+   const workingHourFilter = useMemo(() => {
+      if (isTodayHoliday) return null;
+      return { dayOfWeek: todayDayOfWeek };
+   }, [isTodayHoliday, todayDayOfWeek]);
+
+   const { workingHours, isLoading: isLoadingWorkingHours } =
+      useWorkingHours(workingHourFilter);
+
+   const todayWorkingHours = isTodayHoliday ? "Libur" : workingHours?.data?.[0];
+   const hasWorkingHours = Boolean(
+      todayWorkingHours && todayWorkingHours !== "Libur"
    );
 
-   const attendanceFilter = (type?: string) => ({
-      attendanceType: type,
-      startDate: today,
-      endDate: today,
-      include: "details",
-   });
+   // Attendance
+   // Factory for attendance filters
+   const attendanceFilter = useCallback(
+      (type?: string) => ({
+         attendanceType: type,
+         startDate: today,
+         endDate: today,
+         include: "details",
+      }),
+      [today]
+   );
 
-   const geofenceFilter = useMemo(() => ({ isActive: true }), []);
-
-   // Data hooks
+   // Check-in data
    const {
       userAttendances: checkInData,
       isLoading: isLoadingCheckIn,
       mutate: refetchCheckIn,
    } = useAttendanceByUser(userId, attendanceFilter("checkIn"));
 
+   // Check-out data
    const {
       userAttendances: checkOutData,
       isLoading: isLoadingCheckOut,
       mutate: refetchCheckOut,
    } = useAttendanceByUser(userId, attendanceFilter("checkOut"));
-
-   const { workingHours, isLoading: isLoadingWorkingHours } =
-      useWorkingHours(workingHourFilter);
-   const todayWorkingHours = workingHours?.data?.[0];
-   const hasWorkingHours = Boolean(todayWorkingHours);
-
-   const {
-      settingsGeofences: activeSettingsGeofences,
-      isLoading: isLoadingSettingsGeofence,
-   } = useSettingsGeofences(geofenceFilter);
-
-   const { handleCheck: handleCheckIn, isLoading: isLoadingHandleCheckIn } =
-      useHandleCheckIn(refetchCheckIn);
-   const { handleCheck: handleCheckOut, isLoading: isLoadingHandleCheckOut } =
-      useHandleCheckOut(checkInData, refetchCheckOut);
 
    const hasCheckedIn = !!checkInData?.data?.[0]?.attendanceDetails?.length;
    const hasCheckedOut = !!checkOutData?.data?.[0]?.attendanceDetails?.length;
@@ -81,11 +87,27 @@ const Page = () => {
    const checkOutTimestamp =
       checkOutData?.data?.[0]?.attendanceDetails?.[0]?.timestamp;
 
+   // Handlers
+   const { handleCheck: handleCheckIn, isLoading: isLoadingHandleCheckIn } =
+      useHandleCheckIn(refetchCheckIn);
+   const { handleCheck: handleCheckOut, isLoading: isLoadingHandleCheckOut } =
+      useHandleCheckOut(checkInData, refetchCheckOut);
+
+   const onCheckIn = useCallback(() => handleCheckIn(), [handleCheckIn]);
+   const onCheckOut = useCallback(() => handleCheckOut(), [handleCheckOut]);
+
+   // Geofence Settings
+   const geofenceFilter = useMemo(() => ({ isActive: true }), []);
+   const {
+      settingsGeofences: activeSettingsGeofences,
+      isLoading: isLoadingSettingsGeofence,
+   } = useSettingsGeofences(geofenceFilter);
+
    return (
       <MobileLayout>
          {/* Top Section */}
-         <div className="bg-blue-500 h-auto pb-12 flex flex-col relative z-[11] rounded-bl-lg rounded-br-lg">
-            <div className="absolute w-64 aspect-square rounded-full top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-blue-100/10 z-10 blur-3xl"></div>
+         <div className="bg-blue-500 pb-12 flex flex-col relative z-[11] rounded-bl-lg rounded-br-lg">
+            <div className="absolute w-64 aspect-square rounded-full top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-blue-100/10 z-10 blur-3xl" />
 
             <section className="mb-2 z-[10] mt-2">
                <div className="flex justify-between px-4 pt-2.5 pb-2 h-20">
@@ -108,7 +130,7 @@ const Page = () => {
                   <span className="font-semibold">
                      Selamat datang, <br />
                   </span>
-                  <span className="font-normal">
+                  <span className="font-normal text-wrap">
                      {isLoadingUser ? "______" : user?.fullName}
                   </span>
                </h2>
@@ -131,19 +153,19 @@ const Page = () => {
                   <AttendanceCard
                      icon={<TimeIcon />}
                      label="Check In"
-                     time={todayWorkingHours?.startTime}
+                     time={todayWorkingHours?.startTime ?? todayWorkingHours}
                      isLoading={isLoadingWorkingHours}
                   />
                   <AttendanceCard
                      icon={<TimeIcon />}
                      label="Check Out"
-                     time={todayWorkingHours?.endTime}
+                     time={todayWorkingHours?.endTime ?? todayWorkingHours}
                      isLoading={isLoadingWorkingHours}
                   />
                </div>
             </section>
 
-            {/* Today Attendance */}
+            {/* Today's Attendance */}
             <section className="mt-6">
                <div className="font-semibold mb-2">Absensi Hari Ini</div>
                <div className="grid grid-cols-2 gap-2">
@@ -166,18 +188,18 @@ const Page = () => {
             <section className="mt-6">
                {!hasCheckedIn && (
                   <SwipeToAction
-                     onAction={handleCheckIn}
+                     onAction={onCheckIn}
                      type="checkin"
                      isActive={hasWorkingHours}
                      isLoading={isLoadingHandleCheckIn}
                   />
                )}
-               {hasCheckedIn && (
+               {hasCheckedIn && !hasCheckedOut && (
                   <SwipeToAction
-                     onAction={handleCheckOut}
+                     onAction={onCheckOut}
                      type="checkout"
-                     isActive={!hasCheckedOut && hasWorkingHours}
-                     isLoading={isLoadingCheckOut}
+                     isActive={hasWorkingHours}
+                     isLoading={isLoadingHandleCheckOut}
                   />
                )}
             </section>

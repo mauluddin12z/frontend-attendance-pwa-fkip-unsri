@@ -1,12 +1,17 @@
 import GridIcon from "@/assets/GridIcon.svg";
 import ListIcon from "@/assets/ListIcon.svg";
 
+type ViewType = "list" | "grid";
+
 interface AttendanceViewTypeToggleProps {
-   viewType: "list" | "grid";
-   setViewType: React.Dispatch<React.SetStateAction<"list" | "grid">>;
+   viewType: ViewType;
+   setViewType: React.Dispatch<React.SetStateAction<ViewType>>;
 }
 
-const viewOptions = [
+const viewOptions: {
+   type: ViewType;
+   Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+}[] = [
    { type: "list", Icon: ListIcon },
    { type: "grid", Icon: GridIcon },
 ];
@@ -15,9 +20,6 @@ const AttendanceViewTypeToggle: React.FC<AttendanceViewTypeToggleProps> = ({
    viewType,
    setViewType,
 }) => {
-   const toggleViewType = () => {
-      setViewType(viewType === "list" ? "grid" : "list");
-   };
    return (
       <div className="flex gap-2 justify-center">
          {viewOptions.map(({ type, Icon }) => {
@@ -25,9 +27,12 @@ const AttendanceViewTypeToggle: React.FC<AttendanceViewTypeToggleProps> = ({
             return (
                <button
                   key={type}
-                  onClick={() => toggleViewType()}
+                  onClick={() => setViewType(type)}
+                  disabled={isActive}
                   className={`p-2 rounded-lg hover:bg-gray-200 border border-gray-300 ${
-                     isActive ? "bg-gray-200 text-white" : "bg-white"
+                     isActive
+                        ? "bg-gray-200 text-white cursor-not-allowed"
+                        : "bg-white"
                   }`}
                >
                   <div className="w-5 h-5">

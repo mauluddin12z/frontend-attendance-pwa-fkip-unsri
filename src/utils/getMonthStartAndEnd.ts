@@ -1,11 +1,10 @@
-import moment from "moment-timezone";
-import { TIMEZONE } from "./constants";
+import customMoment from "./customMoment";
 
 // Helper function for date manipulation
 const getMonthStartAndEnd = (date: Date) => {
-   const start = moment.tz(date, TIMEZONE).startOf("month");
-   const end = moment.tz(date, TIMEZONE).endOf("month");
+   const start = customMoment(date).startOf("month");
+   const end = customMoment(date).endOf("month");
    return { start, end };
 };
 
-export default getMonthStartAndEnd
+export default getMonthStartAndEnd;

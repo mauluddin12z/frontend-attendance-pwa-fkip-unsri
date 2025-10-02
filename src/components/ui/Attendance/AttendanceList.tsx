@@ -1,6 +1,6 @@
-import AttendanceListCard from "@/components/ui/AttendanceListCard";
+import AttendanceListCard from "@/components/ui/Attendance/AttendanceListCard";
 import { Attendance } from "@/types";
-import CircleLoading from "./CircleLoading";
+import CircleLoading from "../LoadingSpinner";
 
 interface AttendanceListProps {
    isLoadingAttendance: boolean;

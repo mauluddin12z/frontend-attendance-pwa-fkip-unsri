@@ -2,6 +2,7 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import customMoment from "@/utils/customMoment";
 
 type CalendarHeaderProps = {
    currentDate: Date;
@@ -16,11 +17,7 @@ const CalendarHeader = ({
    onNextMonth,
    isSelectable = true,
 }: CalendarHeaderProps) => {
-   const monthYear = currentDate.toLocaleString("id-ID", {
-      month: "long",
-      year: "numeric",
-   });
-
+   const monthYear = customMoment(currentDate).format("MMMM YYYY");
    return (
       <div
          className={`flex ${

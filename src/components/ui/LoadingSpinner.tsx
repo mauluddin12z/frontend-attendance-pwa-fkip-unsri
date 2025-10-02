@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function CircleLoading() {
+export default function LoadingSpinner() {
    return (
       <div className="flex items-center justify-center">
          <div className="flex justify-center items-center">

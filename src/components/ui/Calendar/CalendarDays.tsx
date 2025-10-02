@@ -1,5 +1,6 @@
 "use client";
 
+import customMoment from "@/utils/customMoment";
 import { useEffect, useRef } from "react";
 
 type CalendarDaysProps = {
@@ -41,28 +42,30 @@ const CalendarDays = ({
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();
 
+   const days = generateDaysInMonth();
+
    useEffect(() => {
-      if (activeRef.current && containerRef.current) {
+      if (containerRef.current && activeRef.current) {
          const container = containerRef.current;
-         const active = activeRef.current;
+         const activeButton = activeRef.current;
 
-         const containerRect = container.getBoundingClientRect();
-         const activeRect = active.getBoundingClientRect();
+         const offsetLeft = activeButton.offsetLeft;
+         const offsetWidth = activeButton.offsetWidth;
+         const containerWidth = container.clientWidth;
 
-         const offset =
-            activeRect.left - containerRect.left + container.scrollLeft;
+         // Calculate scroll position to center active button
+         let scrollTo = offsetLeft - containerWidth / 2 + offsetWidth / 2;
 
-         const scrollTo =
-            offset - container.clientWidth / 2 + active.clientWidth / 2;
+         // Clamp scrollTo between 0 and max scroll
+         const maxScrollLeft = container.scrollWidth - containerWidth;
+         scrollTo = Math.max(0, Math.min(scrollTo, maxScrollLeft));
 
          container.scrollTo({
             left: scrollTo,
             behavior: "smooth",
          });
       }
-   }, [currentDate, isSelectable]);
-
-   const days = generateDaysInMonth();
+   }, [activeDate]);
 
    return (
       <div
@@ -73,9 +76,7 @@ const CalendarDays = ({
       >
          {days.map((day, index) => {
             const isActive = isSameDate(day, activeDate);
-            const dayName = day.toLocaleDateString("id-ID", {
-               weekday: "short",
-            });
+            const dayName = customMoment(day).format("ddd");
             const dayOfMonth = String(day.getDate()).padStart(2, "0");
 
             return (

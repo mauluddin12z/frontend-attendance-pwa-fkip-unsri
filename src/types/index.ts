@@ -50,3 +50,45 @@ export interface UserLocation {
    lat: number;
    lng: number;
 }
+
+export interface Approver {
+   id: number;
+   fullName: string;
+   nip: string;
+   email: string;
+}
+export interface LeaveUser {
+   id: number;
+   fullName: string;
+   nip: string;
+   email: string;
+}
+
+export interface LeaveRequest {
+   id: number;
+   userId: number;
+   leaveType: string;
+   startDate: string;
+   endDate: string;
+   reason: string;
+   status?: "pending" | "approved" | "rejected" | "canceled";
+   approverId?: number | null;
+   approvalNotes?: string | null;
+   approver?: Approver;
+   leaveUser?: LeaveUser;
+   createdAt?: string;
+}
+
+// Types
+export interface LeaveRequestForm {
+   userId: string;
+   startDate: string;
+   endDate: string;
+   leaveType: string;
+   reason: string;
+}
+export interface Holiday {
+   name: string;
+   date: string;
+   description: string;
+}

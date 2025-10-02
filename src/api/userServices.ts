@@ -67,6 +67,21 @@ export const updateUser = async (
    }
 };
 
+export const updateUserProfile = async (
+   userId: number | string,
+   updatedData: FormData
+) => {
+   try {
+      const response = await axiosInstance.patch(
+         `/update-profile/${userId}`,
+         updatedData
+      );
+      return response.data;
+   } catch (error: any) {
+      throw handleApiError(error, "Error updating user");
+   }
+};
+
 // Delete a user by their ID
 
 export const deleteUser = async (userId: number | string) => {

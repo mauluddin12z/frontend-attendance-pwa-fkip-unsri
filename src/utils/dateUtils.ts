@@ -1,16 +1,16 @@
-import moment from "moment";
-
 // input = timestamp
+
+import customMoment from "./customMoment";
 
 export function formatTime(
    input?: string | number | Date,
    format: string = "HH:mm:ss",
    fallback: string = "---"
 ): string {
-   if (!input || !moment(input).isValid()) {
+   if (!input || !customMoment(input).isValid()) {
       return fallback;
    }
-   return moment(input).format(format);
+   return customMoment(input).format(format);
 }
 
 export function formatDate(

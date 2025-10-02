@@ -1,5 +1,5 @@
 // hooks/useHandleCheckOut.ts
-import { useUserCheckOut } from "@/hooks/useAttendanceDetail";
+import { useUserCheckOut } from "@/hooks/useAttendanceDetails";
 import { useHandleCheck } from "./useHandleCheck";
 
 export function useHandleCheckOut(checkInData?: any, onSuccess?: () => void) {
