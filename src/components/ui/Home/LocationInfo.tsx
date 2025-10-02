@@ -1,8 +1,8 @@
-import { SettingsGeofence, UserLocation } from "@/types";
-import { haversine } from "@/utils/heversine";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { SettingsGeofence, UserLocation } from "@/types";
+import { haversine } from "@/utils/heversine";
 
 interface LocationInfoProps {
    settingsGeofences: SettingsGeofence[] | undefined;
@@ -13,7 +13,7 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
    settingsGeofences,
    isLoading,
 }) => {
-   const [userLocation, setUserLocation] = useState<UserLocation | null>();
+   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
    const [closestDistance, setClosestDistance] = useState<number | null>(null);
    const [closestName, setClosestName] = useState<string | null>(null);
    const [isInsideGeofence, setIsInsideGeofence] = useState<boolean>(false);
@@ -21,7 +21,7 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
    // Function to request current location
    const requestLocation = () => {
       if (!navigator.geolocation) {
-         alert("Geolocation is not supported by your browser.");
+         alert("Geolocation tidak support pada browser anda.");
          return;
       }
 
@@ -34,13 +34,18 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
          },
          (err) => {
             alert(
-               "Unable to retrieve location. Please enable GPS/location services and grant permission."
+               "Tidak dapat mengambil lokasi. Harap aktifkan GPS/layanan lokasi dan beri izin."
             );
             setClosestDistance(null);
             setClosestName(null);
          }
       );
    };
+
+   // Automatically fetch location on component mount
+   useEffect(() => {
+      requestLocation();
+   }, []);
 
    useEffect(() => {
       if (!userLocation || !settingsGeofences?.length) {
@@ -67,7 +72,7 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
             geofence.latitude,
             geofence.longitude
          ),
-         radius: geofence.radiusMeters, // Get radius from geofence data
+         radius: geofence.radiusMeters,
       }));
 
       const closest = distancesWithName.reduce((prev, curr) =>
@@ -89,13 +94,12 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
       // If location unavailable, ask user to activate GPS
       if (closestDistance === null || closestName === null) {
          const enableGPS = window.confirm(
-            "Location is unavailable. Please enable GPS/location services and grant permission. Try again?"
+            "Lokasi tidak tersedia. Harap aktifkan GPS/layanan lokasi dan beri izin. Coba lagi?"
          );
          if (enableGPS) {
             requestLocation();
          }
       } else {
-         // Optional: if location is already known, maybe refresh location on click
          requestLocation();
       }
    };
@@ -105,25 +109,25 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
          <button
             onClick={handleClick}
             className="p-2 w-10 h-10 bg-blue-300 text-white rounded-lg flex items-center justify-center"
-            title="Get current location"
+            title="Dapatkan lokasi saat ini"
          >
             <FontAwesomeIcon icon={faLocationDot} size="lg" />
          </button>
 
          {isLoading ? (
             <div className="text-white font-light text-sm break-words">
-               Loading...
+               Memuat...
             </div>
          ) : (
             <div className="flex flex-col">
-               <span className="text-white font-light text-sm">Distance</span>
+               <span className="text-white font-light text-sm">Lokasi</span>
                <p className="text-white font-medium text-sm">
                   {closestDistance !== null && closestName
                      ? isInsideGeofence
-                        ? `You are inside the ${closestName} area!`
-                        : `You are ${closestDistance.toFixed(
+                        ? `Anda berada di dalam area ${closestName}!`
+                        : `Anda berjarak ${closestDistance.toFixed(
                              2
-                          )} km away from ${closestName}`
+                          )} km dari ${closestName}`
                      : "---"}
                </p>
             </div>
