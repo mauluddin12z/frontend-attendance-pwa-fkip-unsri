@@ -10,6 +10,7 @@ import NavigationButton from "@/components/ui/NavigationButton";
 import { useState, useMemo } from "react";
 import { useUserLeaveRequests } from "@/hooks/useLeaveRequests";
 import Pagination from "@/components/ui/Pagination";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 export default function LeaveAllPage() {
    const { user } = useAuth();
@@ -82,13 +83,13 @@ export default function LeaveAllPage() {
 
    return (
       <MobileLayout>
-         <header className="flex items-center gap-4 px-4 pt-6 pb-2">
-            <NavigationButton
-               direction="prev"
-               onClick={() => router.push("/me/izin")}
-            />
-            <h1 className="text-xl font-semibold">Semua Pengajuan Izin</h1>
-         </header>
+         {/* Header */}
+         <HeaderTitle
+            title="Semua Pengajuan Izin"
+            showBackButton={true}
+            navigateTo="/me/izin"
+            className="px-4 pt-6"
+         />
 
          <section className="px-4 mt-6">
             <div className="font-semibold mb-2">Riwayat Pengajuan Izin</div>

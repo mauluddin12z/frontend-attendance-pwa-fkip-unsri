@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { SelectField } from "@/components/ui/SelectField";
 import { TextareaField } from "@/components/ui/TextAreaField";
 import { mapJoiErrorsToForm } from "@/utils/mapJoiErrorToForm";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 export default function Page() {
    const { user } = useAuth();
@@ -82,13 +83,12 @@ export default function Page() {
    return (
       <MobileLayout>
          {/* Header */}
-         <header className="flex items-center gap-4 px-4 pt-6 pb-2 z-[11]">
-            <NavigationButton
-               direction="prev"
-               onClick={() => router.push("/me/izin")}
-            />
-            <h1 className="text-xl font-semibold">Pengajuan Izin</h1>
-         </header>
+         <HeaderTitle
+            title="Pengajuan Izin"
+            showBackButton={true}
+            navigateTo="/me/izin"
+            className="px-4 pt-6 mb-6"
+         />
 
          {/* Form */}
          <form

@@ -10,26 +10,28 @@ import { useRouter } from "next/navigation";
 import FormField from "@/components/ui/FormField";
 import { mapJoiErrorsToForm } from "@/utils/mapJoiErrorToForm";
 import Modal from "@/components/ui/Modal";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 type FormData = {
    fullName: string;
+   phoneNumber: string;
    currentPassword?: string;
    newPassword?: string;
    confirmPassword?: string;
 };
 
-export default function ProfilePage() {
+export default function Page() {
    const { user, mutate: userMutate } = useAuth();
-   const userId = user?.id;
    const router = useRouter();
+   const userId = user?.id;
    const { updateUser, isUpdating } = useUpdateUserProfile();
 
-   const [success, setSuccess] = useState(false);
-   const [changePassword, setChangePassword] = useState(false);
-   const [currentPasswordErrMsg, setCurrentPasswordErrMsg] = useState("");
-
-   // New state: control modal open/close
-   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+   const [showPasswordFields, setShowPasswordFields] = useState(false);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [customErrors, setCustomErrors] = useState({
+      phoneNumber: "",
+      currentPassword: "",
+   });
 
    const {
       register,
@@ -39,129 +41,117 @@ export default function ProfilePage() {
       setValue,
       setError,
       getValues,
-   } = useForm<FormData>({
-      mode: "onTouched",
-   });
+   } = useForm<FormData>({ mode: "onTouched" });
 
-   // Watch currentPassword to clear backend error message
+   // Clear custom current password error on input change
    useEffect(() => {
       const subscription = watch((_, { name }) => {
          if (name === "currentPassword") {
-            setCurrentPasswordErrMsg("");
+            setCustomErrors((prev) => ({ ...prev, currentPassword: "" }));
+         }
+         if (name === "phoneNumber") {
+            setCustomErrors((prev) => ({ ...prev, phoneNumber: "" }));
          }
       });
       return () => subscription.unsubscribe();
    }, [watch]);
 
-   // Prefill form with user data
+   // Prefill form
    useEffect(() => {
       if (user) {
          reset({
             fullName: user.fullName || "",
+            phoneNumber: user.phoneNumber || "",
          });
       }
    }, [user, reset]);
 
-   // On successful update reset and show toast
-   useEffect(() => {
-      if (success) {
-         reset({
-            fullName: user?.fullName || "",
-            currentPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-         });
-         setChangePassword(false);
-         toast.success("Profile updated successfully!");
-         setSuccess(false);
-      }
-   }, [success, reset, user]);
-
-   // This is the actual submit handler for updating user profile
-   const onSubmit = async (data: FormData) => {
-      const toastId = toast.loading("Updating profile...");
+   const handleSubmit = async (form: FormData) => {
       if (!userId) return;
 
-      const formData = new FormData();
-      formData.append("fullName", data.fullName);
+      const toastId = toast.loading("Updating profile...");
 
-      if (
-         changePassword &&
-         data.currentPassword &&
-         data.newPassword &&
-         data.confirmPassword
-      ) {
-         formData.append("currentPassword", data.currentPassword);
-         formData.append("newPassword", data.newPassword);
-         formData.append("confirmPassword", data.confirmPassword);
+      const formData = new FormData();
+      formData.append("fullName", form.fullName);
+      formData.append("phoneNumber", form.phoneNumber);
+
+      if (showPasswordFields) {
+         formData.append("currentPassword", form.currentPassword || "");
+         formData.append("newPassword", form.newPassword || "");
+         formData.append("confirmPassword", form.confirmPassword || "");
       }
 
       try {
          await updateUser(userId, formData);
          userMutate();
-         setSuccess(true);
-         toast.dismiss(toastId);
-         setIsUpdateModalOpen(false);
+         toast.success("Profile updated successfully", { id: toastId });
+         reset({
+            fullName: form.fullName,
+            phoneNumber: form.phoneNumber,
+         });
+         setShowPasswordFields(false);
+         setIsModalOpen(false);
       } catch (error: any) {
-         setSuccess(false);
+         toast.dismiss(toastId);
 
          if (Array.isArray(error?.details)) {
             mapJoiErrorsToForm(error.details, setError, [
                "fullName",
+               "phoneNumber",
                "currentPassword",
-               "password",
+               "newPassword",
                "confirmPassword",
             ]);
-            toast.error("Mohon perbaiki kesalahan yang ditandai.", {
-               id: toastId,
-            });
+            toast.error("Mohon perbaiki kesalahan yang ditandai.");
          } else {
-            const message = error?.message || "Failed to update profile.";
-            if (message.toLowerCase().includes("current password")) {
-               setCurrentPasswordErrMsg(message);
+            const message = error?.message || "Gagal memperbarui profil.";
+            if (error?.errorType === "DuplicateError") {
+               setCustomErrors((prev) => ({
+                  ...prev,
+                  phoneNumber: "Nomor Telepon ini sudah terdaftar",
+               }));
             }
-            toast.error(message, { id: toastId });
+            if (message.toLowerCase().includes("current password")) {
+               setCustomErrors((prev) => ({
+                  ...prev,
+                  currentPassword: message,
+               }));
+            }
+            toast.error(message);
          }
-         setIsUpdateModalOpen(false);
       }
    };
 
-   // Handle opening modal on form submit button click
-   const handleOpenModal = () => {
-      setIsUpdateModalOpen(true);
-   };
-
-   // Handle confirm button in modal, trigger actual form submit with current data
    const handleConfirmUpdate = () => {
-      const data = getValues();
-      onSubmit(data);
+      const formData = getValues();
+      handleSubmit(formData);
    };
 
-   const closeUpdateModal = () => {
-      setIsUpdateModalOpen(false);
+   const handleCancelPasswordChange = () => {
+      setShowPasswordFields(false);
+      setValue("currentPassword", "");
+      setValue("newPassword", "");
+      setValue("confirmPassword", "");
    };
 
    return (
       <>
-         <div className="max-w-md mx-auto mt-10 px-4">
-            <div className="flex gap-x-2 mb-6 items-center">
-               <NavigationButton
-                  direction="prev"
-                  onClick={() => router.push("/me/home")}
-                  borderColor="border-white/0"
-               />
-               <h1 className="text-2xl font-semibold">Update Profile</h1>
-            </div>
+         <div className="max-w-md mx-auto px-4">
+            <HeaderTitle
+               title="Update Profile"
+               showBackButton={true}
+               navigateTo="/me/profile"
+               className="pt-6 mb-6"
+            />
 
             <form
                onSubmit={(e) => {
                   e.preventDefault();
-                  handleOpenModal();
+                  setIsModalOpen(true);
                }}
                className="space-y-5"
                noValidate
             >
-               {/* Full Name */}
                <FormField
                   label="Full Name"
                   type="text"
@@ -169,29 +159,35 @@ export default function ProfilePage() {
                   register={register("fullName")}
                />
 
-               {/* Toggle password fields */}
-               {!changePassword ? (
+               <FormField
+                  label="Nomor Telepon"
+                  type="text"
+                  error={
+                     errors.phoneNumber?.message || customErrors.phoneNumber
+                  }
+                  register={register("phoneNumber")}
+               />
+
+               {!showPasswordFields ? (
                   <button
                      type="button"
-                     onClick={() => setChangePassword(true)}
+                     onClick={() => setShowPasswordFields(true)}
                      className="text-sm text-blue-600 hover:underline"
                   >
-                     Change Password?
+                     Ubah password?
                   </button>
                ) : (
                   <>
-                     {/* Current Password */}
                      <FormField
                         label="Current Password"
                         type="password"
                         error={
                            errors.currentPassword?.message ||
-                           currentPasswordErrMsg
+                           customErrors.currentPassword
                         }
                         register={register("currentPassword")}
                      />
 
-                     {/* New Password */}
                      <FormField
                         label="New Password"
                         type="password"
@@ -199,7 +195,6 @@ export default function ProfilePage() {
                         register={register("newPassword")}
                      />
 
-                     {/* Confirm Password */}
                      <FormField
                         label="Confirm Password"
                         type="password"
@@ -207,56 +202,51 @@ export default function ProfilePage() {
                         register={register("confirmPassword")}
                      />
 
-                     {/* Cancel password change */}
                      <button
                         type="button"
-                        onClick={() => {
-                           setChangePassword(false);
-                           setValue("currentPassword", "");
-                           setValue("newPassword", "");
-                           setValue("confirmPassword", "");
-                        }}
+                        onClick={handleCancelPasswordChange}
                         className="text-sm text-gray-500 hover:underline"
                      >
-                        Cancel password change
+                        Batalkan perubahan password
                      </button>
                   </>
                )}
 
-               {/* Submit Button (opens modal) */}
                <button
                   type="submit"
                   disabled={isUpdating}
                   className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
                >
-                  {isUpdating ? "Updating..." : "Update Profile"}
+                  {isUpdating ? "Memperbarui..." : "Perbarui Profil"}
                </button>
             </form>
          </div>
 
-         {/* Confirmation Modal */}
+         {/* Modal Konfirmasi */}
          <Modal
-            isOpen={isUpdateModalOpen}
-            closeModal={closeUpdateModal}
-            isFooter={true}
+            isOpen={isModalOpen}
+            closeModal={() => setIsModalOpen(false)}
+            isFooter
             footer={
                <div className="flex justify-end space-x-4 pt-2">
                   <button
-                     onClick={closeUpdateModal}
+                     onClick={() => setIsModalOpen(false)}
                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
                   >
-                     Cancel
+                     Batal
                   </button>
                   <button
                      onClick={handleConfirmUpdate}
                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                   >
-                     Update
+                     Konfirmasi
                   </button>
                </div>
             }
          >
-            <p>Apakah anda yakin ingin mengubah profile anda?</p>
+            <p className="text-gray-800 text-sm">
+               Apakah Anda yakin ingin memperbarui profil Anda?
+            </p>
          </Modal>
       </>
    );

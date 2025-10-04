@@ -11,6 +11,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { LeaveFilterType } from "@/components/ui/Leave/LeaveRequestFilter";
 import { useUserLeaveRequests } from "@/hooks/useLeaveRequests";
 import { LeaveRequest } from "@/types";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 export default function LeaveDashboardPage() {
    const { user } = useAuth();
@@ -61,15 +62,16 @@ export default function LeaveDashboardPage() {
 
    return (
       <MobileLayout>
-         <header className="flex justify-between items-center px-4 pt-6 pb-2">
-            <h1 className="text-2xl font-semibold">Permintaan Izin</h1>
+         {/* Header */}
+         <section className="flex justify-between items-center px-4 pt-6">
+            <HeaderTitle title="Pengajuan Izin" />
             <button
                onClick={() => router.push("/me/izin/add")}
                className="p-2 rounded-lg border bg-white border-gray-400 text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition"
             >
                <FontAwesomeIcon icon={faPlus} />
             </button>
-         </header>
+         </section>
 
          <section className="px-4 mt-6 grid grid-cols-2 gap-4">
             <LeaveDashboardCard

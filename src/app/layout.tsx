@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import { DeviceProvider } from "@/context/DeviceContext";
+import { LocationProvider } from "@/context/LocationContext";
 // Load the Poppins font
 const poppins = Poppins({
    variable: "--font-poppins",
@@ -27,8 +28,10 @@ export default function RootLayout({
          <body className={`${poppins.variable} antialiased`}>
             <AuthProvider>
                <DeviceProvider>
-                  <Toaster position="top-center" reverseOrder={false} />
-                  {children}
+                  <LocationProvider>
+                     <Toaster position="top-center" reverseOrder={false} />
+                     {children}
+                  </LocationProvider>
                </DeviceProvider>
             </AuthProvider>
          </body>

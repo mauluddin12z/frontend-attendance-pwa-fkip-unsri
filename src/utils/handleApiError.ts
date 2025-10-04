@@ -10,10 +10,13 @@ export function handleApiError(
 ) {
    const errorData = error?.response?.data || {};
 
-   const err: { message: string; details?: any } = {
+   const err: { message: string; errorType?: string; details?: any } = {
       message: errorData.message || fallbackMessage,
    };
 
+   if (errorData.errorType) {
+      err.errorType = errorData.errorType;
+   }
    if (errorData.details) {
       err.details = errorData.details;
    }

@@ -4,6 +4,7 @@ export interface User {
    fullName: string;
    nip: string;
    email: string;
+   phoneNumber: string;
    username: string;
    password: string;
    roleId: number;
@@ -13,6 +14,7 @@ export interface Session {
    fullName: string;
    nip: string;
    email: string;
+   phoneNumber: string;
    role: string;
 }
 
@@ -56,12 +58,14 @@ export interface Approver {
    fullName: string;
    nip: string;
    email: string;
+   phoneNumber: string;
 }
 export interface LeaveUser {
    id: number;
    fullName: string;
    nip: string;
    email: string;
+   phoneNumber: string;
 }
 
 export interface LeaveRequest {

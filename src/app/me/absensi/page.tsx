@@ -11,6 +11,7 @@ import AttendanceGrid from "@/components/ui/Attendance/AttendanceGrid";
 import ViewTypeToggle from "@/components/ui/Attendance/ViewTypeToggle";
 import getMonthStartAndEnd from "@/utils/getMonthStartAndEnd";
 import SortToggle from "@/components/ui/Attendance/SortToggle";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 export default function Page() {
    const { user } = useAuth();
@@ -93,9 +94,7 @@ export default function Page() {
    return (
       <MobileLayout>
          {/* Header */}
-         <header className="flex justify-between items-center z-[11] px-4 pt-6 pb-2">
-            <h1 className="font-semibold text-2xl">Absensi</h1>
-         </header>
+         <HeaderTitle title="Absensi" className="px-4 pt-6" />
 
          {/* Monthly Attendance Title and ViewType Toggle */}
          <section className="mt-2 px-4 flex justify-between items-center">
