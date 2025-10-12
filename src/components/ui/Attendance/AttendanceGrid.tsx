@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import { Moment } from "moment";
+import React from "react";
 import customMoment from "@/utils/customMoment";
 
 import AttendanceGridCard from "@/components/ui/Attendance/AttendanceGridCard";
 import { Attendance } from "@/types";
-import CircleLoading from "../LoadingSpinner";
+import CircleLoading from "../Loading/LoadingSpinner";
 import generateCalendarDays from "@/utils/generateCalendarDays";
 import AttendanceLegend from "./AttendanceLegend";
 import { attendanceStatusStyle } from "@/utils/attendanceStatusStyle";

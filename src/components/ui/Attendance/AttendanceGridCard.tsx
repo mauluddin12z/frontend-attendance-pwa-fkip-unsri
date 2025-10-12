@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Attendance } from "@/types";
 import customMoment from "@/utils/customMoment";
-import Modal from "../Modal";
+import Modal from "../Modal/Modal";
 import AttendanceListCard from "./AttendanceListCard";
 import {
    AttendanceStatusName,
@@ -46,15 +46,17 @@ const AttendanceGridCard: React.FC<AttendanceGridCardProps> = ({
    return (
       <div className="relative">
          {/* Modal */}
-         <Modal
-            isOpen={isModalOpen}
-            closeModal={closeModal}
-            modalTitle="Attendance Details"
-            isFooter={false}
-            width="w-[calc(100%-24px)]"
-         >
-            <AttendanceListCard day={day} attendance={attendance} />
-         </Modal>
+         {isModalOpen && (
+            <Modal
+               isOpen={isModalOpen}
+               closeModal={closeModal}
+               modalTitle="Detail Absensi"
+               isFooter={false}
+               width="w-[calc(100%-24px)]"
+            >
+               <AttendanceListCard day={day} attendance={attendance} />
+            </Modal>
+         )}
 
          {/* Attendance Grid Card */}
          <button

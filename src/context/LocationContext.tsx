@@ -1,11 +1,11 @@
-"use client";
-
+"use client"
 import React, {
    createContext,
    useContext,
    useEffect,
    useState,
    ReactNode,
+   useMemo,
 } from "react";
 import { UserLocation } from "@/types";
 
@@ -41,7 +41,7 @@ export const LocationProvider = ({ children }: { children: ReactNode }) => {
             setLocationError(null);
             setIsLoading(false);
          },
-         (error) => {
+         () => {
             setLocationError(
                "Gagal mendapatkan lokasi. Harap aktifkan GPS dan beri izin."
             );
@@ -51,15 +51,22 @@ export const LocationProvider = ({ children }: { children: ReactNode }) => {
       );
    };
 
-   // Request on mount (optional)
    useEffect(() => {
       requestLocation();
    }, []);
 
+   const contextValue = useMemo(
+      () => ({
+         userLocation,
+         requestLocation,
+         locationError,
+         isLoading,
+      }),
+      [userLocation, requestLocation, locationError, isLoading]
+   );
+
    return (
-      <LocationContext.Provider
-         value={{ userLocation, requestLocation, locationError, isLoading }}
-      >
+      <LocationContext.Provider value={contextValue}>
          {children}
       </LocationContext.Provider>
    );

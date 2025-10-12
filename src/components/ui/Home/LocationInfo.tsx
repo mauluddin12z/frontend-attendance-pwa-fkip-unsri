@@ -49,8 +49,11 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
          radius: geofence.radiusMeters,
       }));
 
-      const closest = distances.reduce((prev, curr) =>
-         curr.distance < prev.distance ? curr : prev
+      if (!distances.length) return;
+
+      const closest = distances.reduce(
+         (prev, curr) => (curr.distance < prev.distance ? curr : prev),
+         distances[0]
       );
 
       setClosestDistance(closest.distance);

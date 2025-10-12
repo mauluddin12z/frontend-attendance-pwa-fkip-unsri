@@ -1,8 +1,3 @@
-interface ApiError {
-   message: string;
-   code?: string;
-}
-
 // Utility function to handle API errors
 export function handleApiError(
    error: any,

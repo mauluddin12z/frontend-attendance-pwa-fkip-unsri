@@ -12,7 +12,7 @@ export default function LeaveDashboardCard({
    label,
    bgColor,
    borderColor,
-}: LeaveDashboardCardProps) {
+}: Readonly<LeaveDashboardCardProps>) {
    return (
       <div
          className={`${bgColor} border-2 ${borderColor} rounded-lg flex flex-col justify-center items-center h-24 p-2`}

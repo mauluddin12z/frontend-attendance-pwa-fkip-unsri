@@ -2,7 +2,7 @@
 
 import { faArrowRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface SwipeToActionProps {
    onAction: () => void;
@@ -16,11 +16,26 @@ export default function SwipeToAction({
    type,
    isActive = true,
    isLoading = false,
-}: SwipeToActionProps) {
+}: Readonly<SwipeToActionProps>) {
    const sliderRef = useRef<HTMLDivElement>(null);
    const [dragX, setDragX] = useState(0);
    const [dragging, setDragging] = useState(false);
-   const [shouldAnimate, setShouldAnimate] = useState(false); // Controls knob transition
+   const [shouldAnimate, setShouldAnimate] = useState(false);
+   const [sliderWidth, setSliderWidth] = useState(0);
+
+   // Measure slider width on mount and resize
+   useEffect(() => {
+      function updateWidth() {
+         if (sliderRef.current) {
+            setSliderWidth(sliderRef.current.getBoundingClientRect().width);
+         }
+      }
+
+      updateWidth();
+      window.addEventListener("resize", updateWidth);
+
+      return () => window.removeEventListener("resize", updateWidth);
+   }, []);
 
    const actionText =
       type === "checkin" ? "Swipe to Check-in" : "Swipe to Check-out";
@@ -79,6 +94,12 @@ export default function SwipeToAction({
    return (
       <div
          ref={sliderRef}
+         role="slider"
+         tabIndex={0}
+         aria-valuemin={0}
+         aria-valuemax={100} // or the max value of your drag range in px or percent
+         aria-valuenow={Math.round((dragX / sliderWidth) * 100)} // convert dragX to %
+         aria-label={actionText}
          className={`relative w-full h-12 rounded-lg shadow-lg overflow-hidden select-none transition-opacity duration-200 bg-${
             type === "checkin" ? "blue-400" : "red-400"
          } ${
@@ -92,6 +113,24 @@ export default function SwipeToAction({
          onMouseMove={(e) => dragging && handleMove(e)}
          onMouseUp={handleEnd}
          onMouseLeave={() => dragging && handleEnd()}
+         onKeyDown={(e) => {
+            if (disabled) return;
+            const rect = sliderRef.current?.getBoundingClientRect();
+            const maxWidth = rect?.width ?? 0;
+            const step = maxWidth / 10;
+
+            if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+               e.preventDefault();
+               setDragX((prev) => Math.min(prev + step, maxWidth));
+            } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+               e.preventDefault();
+               setDragX((prev) => Math.max(prev - step, 0));
+            } else if (e.key === "Enter" || e.key === " ") {
+               e.preventDefault();
+               if (dragX > maxWidth * 0.8) onAction();
+               setDragX(0);
+            }
+         }}
       >
          {/* Animated Gradient Trail */}
          <div

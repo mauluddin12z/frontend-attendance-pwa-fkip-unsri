@@ -1,25 +1,24 @@
 "use client";
 
 import React, { useMemo, useCallback } from "react";
-import MobileLayout from "@/components/layout/mobile/MobileLayout";
 import SwipeToAction from "@/components/ui/Home/SwipeToAction";
 import Calendar from "@/components/ui/Calendar/HorizontalCalendar";
-import CheckInIcon from "@/assets/checkInIcon";
-import CheckOutIcon from "@/assets/checkOutIcon";
-import TimeIcon from "@/assets/timeIcon";
+import CheckInIcon from "@/assets/CheckInIcon";
+import CheckOutIcon from "@/assets/CheckOutIcon";
+import TimeIcon from "@/assets/TimeIcon";
 import { useAuth } from "@/context/AuthContext";
-import { useAttendanceByUser } from "@/hooks/useAttendances";
-import { useHandleCheckIn } from "@/hooks/useHandleCheckIn";
-import { useHandleCheckOut } from "@/hooks/useHandleCheckOut";
-import { useWorkingHours } from "@/hooks/useWorkingHours";
-import { useSettingsGeofences } from "@/hooks/useSettingsGeofences";
+import { useAttendanceByUser } from "@/hooks/attendance/useAttendances";
+import { useHandleCheckIn } from "@/hooks/attendance/useHandleCheckIn";
+import { useHandleCheckOut } from "@/hooks/attendance/useHandleCheckOut";
+import { useWorkingHours } from "@/hooks/working-hour/useWorkingHours";
+import { useSettingsGeofences } from "@/hooks/settings-geofence/useSettingsGeofences";
 import { formatTime } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import AttendanceCard from "@/components/ui/Home/AttendanceCard";
 import LocationInfo from "@/components/ui/Home/LocationInfo";
 import customMoment from "@/utils/customMoment";
-import { useHolidays } from "@/hooks/useHolidays";
+import { useHolidays } from "@/hooks/holiday/useHolidays";
 import { Holiday } from "@/types";
 
 const Page = () => {
@@ -33,22 +32,25 @@ const Page = () => {
 
    // Holidays
    const { holidays } = useHolidays();
-   const isTodayHoliday = useMemo(() => {
-      if (!holidays?.data) return false;
-      return holidays.data.some((holiday: Holiday) => holiday.date === today);
+   const todayHoliday = useMemo(() => {
+      if (!holidays?.data) return null;
+      return (
+         holidays.data.find((holiday: Holiday) => holiday.date === today) ||
+         null
+      );
    }, [holidays, today]);
 
    // Working Hours
    // Filter depends on day of week and skip if holiday
    const workingHourFilter = useMemo(() => {
-      if (isTodayHoliday) return null;
+      if (todayHoliday) return null;
       return { dayOfWeek: todayDayOfWeek };
-   }, [isTodayHoliday, todayDayOfWeek]);
+   }, [todayHoliday, todayDayOfWeek]);
 
    const { workingHours, isLoading: isLoadingWorkingHours } =
       useWorkingHours(workingHourFilter);
 
-   const todayWorkingHours = isTodayHoliday ? "Libur" : workingHours?.data?.[0];
+   const todayWorkingHours = todayHoliday ? "Libur" : workingHours?.data?.[0];
    const hasWorkingHours = Boolean(
       todayWorkingHours && todayWorkingHours !== "Libur"
    );
@@ -104,7 +106,7 @@ const Page = () => {
    } = useSettingsGeofences(geofenceFilter);
 
    return (
-      <MobileLayout>
+      <>
          {/* Top Section */}
          <div className="bg-blue-500 pb-12 flex flex-col relative z-[11] rounded-bl-lg rounded-br-lg">
             <div className="absolute w-64 aspect-square rounded-full top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-blue-100/10 z-10 blur-3xl" />
@@ -154,12 +156,14 @@ const Page = () => {
                      icon={<TimeIcon />}
                      label="Check In"
                      time={todayWorkingHours?.startTime ?? todayWorkingHours}
+                     description={todayHoliday?.description}
                      isLoading={isLoadingWorkingHours}
                   />
                   <AttendanceCard
                      icon={<TimeIcon />}
                      label="Check Out"
                      time={todayWorkingHours?.endTime ?? todayWorkingHours}
+                     description={todayHoliday?.description}
                      isLoading={isLoadingWorkingHours}
                   />
                </div>
@@ -204,7 +208,7 @@ const Page = () => {
                )}
             </section>
          </div>
-      </MobileLayout>
+      </>
    );
 };
 

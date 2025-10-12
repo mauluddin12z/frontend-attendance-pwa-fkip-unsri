@@ -26,21 +26,6 @@ export const fetchUserById = async (userId: number) => {
    }
 };
 
-// Fetch the attendances for a user by their ID
-export const fetchUserAttendances = async (userId: number, filters: any) => {
-   const queryParams = buildQueryParams(filters);
-   try {
-      const response = await axiosInstance.get(`/user/${userId}/attendances`, {
-         params: queryParams,
-      });
-      return response.data;
-   } catch (error: any) {
-      throw handleApiError(
-         error,
-         `Error fetching attendances for user ${userId}`
-      );
-   }
-};
 
 // Update user data
 export const createUser = async (userData: FormData) => {

@@ -3,14 +3,13 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/context/AuthContext";
-import { useUpdateUserProfile } from "@/hooks/useUsers";
+import { useUpdateUserProfile } from "@/hooks/user";
 import toast from "react-hot-toast";
-import NavigationButton from "@/components/ui/NavigationButton";
-import { useRouter } from "next/navigation";
-import FormField from "@/components/ui/FormField";
+import FormField from "@/components/ui/Form/FormField";
 import { mapJoiErrorsToForm } from "@/utils/mapJoiErrorToForm";
-import Modal from "@/components/ui/Modal";
+import Modal from "@/components/ui/Modal/Modal";
 import HeaderTitle from "@/components/ui/HeaderTitle";
+import LoadingSpinner from "@/components/ui/Loading/LoadingSpinner";
 
 type FormData = {
    fullName: string;
@@ -22,7 +21,6 @@ type FormData = {
 
 export default function Page() {
    const { user, mutate: userMutate } = useAuth();
-   const router = useRouter();
    const userId = user?.id;
    const { updateUser, isUpdating } = useUpdateUserProfile();
 
@@ -102,7 +100,9 @@ export default function Page() {
                "newPassword",
                "confirmPassword",
             ]);
-            toast.error("Mohon perbaiki kesalahan yang ditandai.");
+            toast.error("Mohon perbaiki kesalahan yang ditandai.", {
+               id: toastId,
+            });
          } else {
             const message = error?.message || "Gagal memperbarui profil.";
             if (error?.errorType === "DuplicateError") {
@@ -117,7 +117,7 @@ export default function Page() {
                   currentPassword: message,
                }));
             }
-            toast.error(message);
+            toast.error(message, { id: toastId });
          }
       }
    };
@@ -135,119 +135,128 @@ export default function Page() {
    };
 
    return (
-      <>
-         <div className="max-w-md mx-auto px-4">
-            <HeaderTitle
-               title="Update Profile"
-               showBackButton={true}
-               navigateTo="/me/profile"
-               className="pt-6 mb-6"
+      <div className="px-4">
+         <HeaderTitle
+            title="Update Profile"
+            showBackButton={true}
+            navigateTo="/me/profile"
+            className="pt-6 mb-6"
+         />
+
+         <form
+            onSubmit={(e) => {
+               e.preventDefault();
+               setIsModalOpen(true);
+            }}
+            className="space-y-5"
+            noValidate
+         >
+            <FormField
+               label="Full Name"
+               type="text"
+               error={errors.fullName?.message}
+               register={register("fullName")}
             />
 
-            <form
-               onSubmit={(e) => {
-                  e.preventDefault();
-                  setIsModalOpen(true);
-               }}
-               className="space-y-5"
-               noValidate
-            >
-               <FormField
-                  label="Full Name"
-                  type="text"
-                  error={errors.fullName?.message}
-                  register={register("fullName")}
-               />
+            <FormField
+               label="Nomor Telepon"
+               type="text"
+               error={errors.phoneNumber?.message || customErrors.phoneNumber}
+               register={register("phoneNumber")}
+            />
 
-               <FormField
-                  label="Nomor Telepon"
-                  type="text"
-                  error={
-                     errors.phoneNumber?.message || customErrors.phoneNumber
-                  }
-                  register={register("phoneNumber")}
-               />
+            {!showPasswordFields ? (
+               <button
+                  type="button"
+                  onClick={() => setShowPasswordFields(true)}
+                  className="text-sm text-blue-600 hover:underline"
+               >
+                  Ubah password?
+               </button>
+            ) : (
+               <>
+                  <FormField
+                     label="Current Password"
+                     type="password"
+                     error={
+                        errors.currentPassword?.message ||
+                        customErrors.currentPassword
+                     }
+                     register={register("currentPassword")}
+                  />
 
-               {!showPasswordFields ? (
+                  <FormField
+                     label="New Password"
+                     type="password"
+                     error={errors.newPassword?.message}
+                     register={register("newPassword")}
+                  />
+
+                  <FormField
+                     label="Confirm Password"
+                     type="password"
+                     error={errors.confirmPassword?.message}
+                     register={register("confirmPassword")}
+                  />
+
                   <button
                      type="button"
-                     onClick={() => setShowPasswordFields(true)}
-                     className="text-sm text-blue-600 hover:underline"
+                     onClick={handleCancelPasswordChange}
+                     className="text-sm text-gray-500 hover:underline"
                   >
-                     Ubah password?
+                     Batalkan perubahan password
                   </button>
-               ) : (
-                  <>
-                     <FormField
-                        label="Current Password"
-                        type="password"
-                        error={
-                           errors.currentPassword?.message ||
-                           customErrors.currentPassword
-                        }
-                        register={register("currentPassword")}
-                     />
+               </>
+            )}
 
-                     <FormField
-                        label="New Password"
-                        type="password"
-                        error={errors.newPassword?.message}
-                        register={register("newPassword")}
-                     />
-
-                     <FormField
-                        label="Confirm Password"
-                        type="password"
-                        error={errors.confirmPassword?.message}
-                        register={register("confirmPassword")}
-                     />
-
-                     <button
-                        type="button"
-                        onClick={handleCancelPasswordChange}
-                        className="text-sm text-gray-500 hover:underline"
-                     >
-                        Batalkan perubahan password
-                     </button>
-                  </>
-               )}
-
-               <button
-                  type="submit"
-                  disabled={isUpdating}
-                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-               >
-                  {isUpdating ? "Memperbarui..." : "Perbarui Profil"}
-               </button>
-            </form>
-         </div>
+            <button
+               type="submit"
+               disabled={isUpdating}
+               className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+               {isUpdating ? "Memperbarui..." : "Perbarui Profil"}
+            </button>
+         </form>
 
          {/* Modal Konfirmasi */}
-         <Modal
-            isOpen={isModalOpen}
-            closeModal={() => setIsModalOpen(false)}
-            isFooter
-            footer={
-               <div className="flex justify-end space-x-4 pt-2">
-                  <button
-                     onClick={() => setIsModalOpen(false)}
-                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                  >
-                     Batal
-                  </button>
-                  <button
-                     onClick={handleConfirmUpdate}
-                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                     Konfirmasi
-                  </button>
-               </div>
-            }
-         >
-            <p className="text-gray-800 text-sm">
-               Apakah Anda yakin ingin memperbarui profil Anda?
-            </p>
-         </Modal>
-      </>
+         {isModalOpen && (
+            <Modal
+               isOpen={isModalOpen}
+               closeModal={() => setIsModalOpen(false)}
+               isFooter
+               footer={
+                  <div className="flex justify-end space-x-4 pt-2">
+                     <button
+                        onClick={() => setIsModalOpen(false)}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                     >
+                        Batal
+                     </button>
+                     <button
+                        onClick={handleConfirmUpdate}
+                        className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition ${
+                           isUpdating
+                              ? "opacity-50 cursor-not-allowed"
+                              : "cursor-pointer"
+                        }`}
+                     >
+                        {isUpdating ? (
+                           <>
+                              <LoadingSpinner className="fill-white" />
+                              "Loading..."
+                           </>
+                        ) : (
+                           "Edit"
+                        )}
+                     </button>
+                  </div>
+               }
+            >
+               <p className="p-4 text-gray-800 text-sm">
+                  Apakah Anda yakin ingin memperbarui profil Anda?
+               </p>
+            </Modal>
+         )}
+      </div>
    );
 }

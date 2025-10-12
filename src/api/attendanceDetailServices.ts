@@ -22,7 +22,7 @@ export const fetchAttendanceDetailById = async (attendanceDetailId: number) => {
          `/attendance-detail/${attendanceDetailId}`
       );
       return response.data;
-   } catch (error: any) {
+   } catch (error:any) {
       throw handleApiError(error, "Error fetching attendance detail by ID");
    }
 };

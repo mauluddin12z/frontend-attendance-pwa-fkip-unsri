@@ -1,17 +1,15 @@
 "use client";
 
-import MobileLayout from "@/components/layout/mobile/MobileLayout";
-import FormField from "@/components/ui/FormField";
-import NavigationButton from "@/components/ui/NavigationButton";
+import FormField from "@/components/ui/Form/FormField";
 import { useAuth } from "@/context/AuthContext";
-import { useCreateLeaveRequest } from "@/hooks/useLeaveRequests";
+import { useCreateLeaveRequest } from "@/hooks/leave-request";
 import { LeaveRequestForm } from "@/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { SelectField } from "@/components/ui/SelectField";
-import { TextareaField } from "@/components/ui/TextAreaField";
+import { SelectField } from "@/components/ui/Form/SelectField";
+import { TextareaField } from "@/components/ui/Form/TextAreaField";
 import { mapJoiErrorsToForm } from "@/utils/mapJoiErrorToForm";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 
@@ -81,7 +79,7 @@ export default function Page() {
    };
 
    return (
-      <MobileLayout>
+      <>
          {/* Header */}
          <HeaderTitle
             title="Pengajuan Izin"
@@ -139,6 +137,6 @@ export default function Page() {
                {isSubmitting ? "Mengajukan..." : "Ajukan Izin"}
             </button>
          </form>
-      </MobileLayout>
+      </>
    );
 }

@@ -1,20 +1,16 @@
 "use client";
-import MobileLayout from "@/components/layout/mobile/MobileLayout";
 import LeaveRequestList from "@/components/ui/Leave/LeaveRequestList";
 import LeaveRequestFilter, {
    LeaveFilterType,
 } from "@/components/ui/Leave/LeaveRequestFilter";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import NavigationButton from "@/components/ui/NavigationButton";
 import { useState, useMemo } from "react";
-import { useUserLeaveRequests } from "@/hooks/useLeaveRequests";
+import { useUserLeaveRequests } from "@/hooks/leave-request";
 import Pagination from "@/components/ui/Pagination";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 
 export default function LeaveAllPage() {
    const { user } = useAuth();
-   const router = useRouter();
 
    const pageSize = 10;
    const [page, setPage] = useState(1);
@@ -82,7 +78,7 @@ export default function LeaveAllPage() {
    };
 
    return (
-      <MobileLayout>
+      <>
          {/* Header */}
          <HeaderTitle
             title="Semua Pengajuan Izin"
@@ -107,15 +103,13 @@ export default function LeaveAllPage() {
          {/* Pagination Section */}
          <section className="mt-2">
             <Pagination
-               totalItems={filteredRequests?.pagination?.totalItems || 0}
                currentPage={page}
                hasNextPage={filteredRequests?.pagination?.hasNextPage || false}
                onPageChange={setPage}
                totalPages={filteredRequests?.pagination?.totalPages || 1}
-               pageSize={pageSize}
                isLoading={isLoading}
             />
          </section>
-      </MobileLayout>
+      </>
    );
 }

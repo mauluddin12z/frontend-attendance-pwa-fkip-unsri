@@ -16,7 +16,7 @@ export default function HeaderTitle({
    showBackButton = false,
    navigateTo = "/",
    className = "",
-}: HeaderTitleProps) {
+}: Readonly<HeaderTitleProps>) {
    const router = useRouter();
 
    const handleBack = () => {

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { login } from "@/api/auth";
 import toast from "react-hot-toast";
-import LoadingButton from "@/components/ui/LoadingButton";
+import LoadingButton from "@/components/ui/Loading/LoadingButton";
 import LoginVector from "@/assets/LoginVector.svg";
 import { isMobile } from "react-device-detect";
 import { useState } from "react";
@@ -27,17 +27,14 @@ export default function Page() {
    const [isSubmitting, setIsSubmitting] = useState(false);
 
    const onSubmit = async (data: LoginFormData) => {
-      const toastId = toast.loading("Logging in...");
+      const toastId = toast.loading("Sedang login...");
       setIsSubmitting(true);
 
       try {
-         const response = await login(data.username, data.password);
-         toast.success(
-            response?.data?.message || "You are logged in successfully",
-            {
-               id: toastId,
-            }
-         );
+         await login(data.username, data.password);
+         toast.success("Anda berhasil masuk ke akun Anda.", {
+            id: toastId,
+         });
 
          // Redirect to home (based on device)
          router.push(isMobile ? "/me/home" : "/home");
@@ -47,7 +44,9 @@ export default function Page() {
                "username",
                "password",
             ]);
-            toast.error("Mohon perbaiki kesalahan yang ditandai.", { id: toastId });
+            toast.error("Mohon perbaiki kesalahan yang ditandai.", {
+               id: toastId,
+            });
          } else {
             const errorMessage =
                error?.message || "Login failed. Please try again.";
@@ -134,9 +133,7 @@ export default function Page() {
                         }`}
                      >
                         {isSubmitting ? (
-                           <div className="flex gap-2 justify-center items-center">
-                              <LoadingButton /> Loading...
-                           </div>
+                           <LoadingButton label="Loading..." />
                         ) : (
                            "Sign In"
                         )}

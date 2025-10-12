@@ -3,8 +3,8 @@ import { formatDate, formatDateTime } from "@/utils/dateUtils";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import Modal from "../Modal";
-import LoadingButton from "../LoadingButton";
+import Modal from "../Modal/Modal";
+import LoadingButton from "../Loading/LoadingButton";
 
 interface LeaveCardProps extends LeaveRequest {
    onDelete?: () => void;
@@ -119,63 +119,59 @@ const LeaveCard: React.FC<LeaveCardProps> = ({
             {approver && (
                <div className="text-sm text-gray-700">
                   {approvalNotes && (
-                     <>
-                        <p className="font-semibold mb-1">
-                           Catatan Persetujuan:{" "}
-                           <span className="font-normal">{approvalNotes}</span>
-                        </p>
-                     </>
+                     <p className="font-semibold mb-1">
+                        Catatan Persetujuan:{" "}
+                        <span className="font-normal">{approvalNotes}</span>
+                     </p>
                   )}
                   {approver?.fullName && (
-                     <>
-                        <p className="font-semibold mb-1">
-                           Approver:{" "}
-                           <span className="font-normal">
-                              {approver?.fullName}
-                           </span>
-                        </p>
-                     </>
+                     <p className="font-semibold mb-1">
+                        Approver:{" "}
+                        <span className="font-normal">
+                           {approver?.fullName}
+                        </span>
+                     </p>
                   )}
                </div>
             )}
          </div>
-         <Modal
-            isOpen={deleteModalOpen}
-            closeModal={closeDeleteModal}
-            footer={
-               <div className="flex justify-end space-x-4 pt-2">
-                  <button
-                     onClick={closeDeleteModal}
-                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                  >
-                     Cancel
-                  </button>
-                  {onDelete && (
+         {deleteModalOpen && (
+            <Modal
+               isOpen={deleteModalOpen}
+               closeModal={closeDeleteModal}
+               footer={
+                  <div className="flex justify-end space-x-4 pt-2">
                      <button
-                        onClick={() => {
-                           onDelete();
-                        }}
-                        disabled={isDeleting}
-                        className={`px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition ${
-                           isDeleting
-                              ? "opacity-50 cursor-not-allowed"
-                              : "cursor-pointer"
-                        }`}
+                        onClick={closeDeleteModal}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
                      >
-                        {isDeleting ? (
-                           <div className="flex gap-2 justify-center items-center">
-                              <LoadingButton /> Loading...
-                           </div>
-                        ) : (
-                           "Delete"
-                        )}
+                        Cancel
                      </button>
-                  )}
-               </div>
-            }
-         >
-            Yakin ingin menghapus pengajuan ini?
-         </Modal>
+                     {onDelete && (
+                        <button
+                           onClick={() => {
+                              onDelete();
+                           }}
+                           disabled={isDeleting}
+                           className={`px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition ${
+                              isDeleting
+                                 ? "opacity-50 cursor-not-allowed"
+                                 : "cursor-pointer"
+                           }`}
+                        >
+                           {isDeleting ? (
+                              <LoadingButton label="Loading..." />
+                           ) : (
+                              "Delete"
+                           )}
+                        </button>
+                     )}
+                  </div>
+               }
+            >
+               Yakin ingin menghapus pengajuan ini?
+            </Modal>
+         )}
       </>
    );
 };

@@ -1,8 +1,8 @@
 import React from "react";
 import LeaveCard from "./LeaveCard";
 import { LeaveRequest } from "@/types";
-import LoadingSpinner from "../LoadingSpinner";
-import { useDeleteLeaveRequest } from "@/hooks/useLeaveRequests";
+import LoadingSpinner from "../Loading/LoadingSpinner";
+import { useDeleteLeaveRequest } from "@/hooks/leave-request";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -23,12 +23,13 @@ const LeaveRequestList: React.FC<Props> = ({
    const { deleteLeaveRequest, isDeleting } = useDeleteLeaveRequest();
 
    const handleDelete = async (id: number) => {
+      const toastId = toast.loading("Menghapus...");
       try {
          await deleteLeaveRequest(id);
          await refetchAll();
-         toast.success("Pengajuan berhasil dihapus.");
+         toast.success("Pengajuan berhasil dihapus.", { id: toastId });
       } catch {
-         toast.error("Gagal menghapus pengajuan.");
+         toast.error("Gagal menghapus pengajuan.", { id: toastId });
       }
    };
 

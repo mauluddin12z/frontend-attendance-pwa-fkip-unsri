@@ -6,11 +6,12 @@ import React, {
    useContext,
    useEffect,
    useState,
+   useMemo,
 } from "react";
 import { isMobile } from "react-device-detect";
 
 interface DeviceContextProps {
-   isMobileDevice: boolean | null; // null means "not detected yet"
+   isMobileDevice: boolean | null;
 }
 
 const DeviceContext = createContext<DeviceContextProps>({
@@ -28,8 +29,10 @@ export const DeviceProvider: React.FC<DeviceProviderProps> = ({ children }) => {
       setIsMobileDevice(isMobile);
    }, []);
 
+   const contextValue = useMemo(() => ({ isMobileDevice }), [isMobileDevice]);
+
    return (
-      <DeviceContext.Provider value={{ isMobileDevice }}>
+      <DeviceContext.Provider value={contextValue}>
          {children}
       </DeviceContext.Provider>
    );

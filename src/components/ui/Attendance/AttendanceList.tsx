@@ -1,6 +1,6 @@
 import AttendanceListCard from "@/components/ui/Attendance/AttendanceListCard";
 import { Attendance } from "@/types";
-import CircleLoading from "../LoadingSpinner";
+import CircleLoading from "../Loading/LoadingSpinner";
 
 interface AttendanceListProps {
    isLoadingAttendance: boolean;
@@ -30,7 +30,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
                );
             })
          ) : (
-            <div>No attendance records for this month.</div>
+            <div className="text-center">Tidak ditemukan data absensi.</div>
          )}
       </div>
    );

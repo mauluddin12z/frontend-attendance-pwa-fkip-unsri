@@ -1,7 +1,7 @@
 "use client";
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import useSWR, { mutate as globalMutate } from "swr";
+import useSWR from "swr";
 import axiosInstance from "@/api/axiosInstance";
 import { logout } from "@/api/auth";
 import { Session } from "@/types";
@@ -32,35 +32,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
    const {
       data: user,
-      error,
       isLoading,
       mutate,
    } = useSWR<Session | null>(
       shouldFetch ? "/auth/session" : null,
       fetchSession
    );
+// Logout handler
+const handleLogout = async () => {
+   const toastId = toast.loading("Sedang logout...");
+   try {
+      await logout();
+      await mutate(null, false);
+      toast.success("Anda berhasil logout", { id: toastId });
+   } catch (error) {
+      toast.error(`Terjadi kesalahan saat logout: ${error}`, { id: toastId });
+   }
+};
 
-   // Logout handler
-   const handleLogout = async () => {
-      try {
-         const toastId = toast.loading("Logging out...");
-         await logout();
-         await mutate(null, false);
-         toast.success("You are logged out successfully", { id: toastId });
-      } catch (error) {
-         toast.error(`Error logging out: ${error}`);
-      }
-   };
+
+   // Memoize the context value
+   const contextValue = useMemo(
+      () => ({
+         user: user ?? null,
+         isLoading,
+         mutate,
+         handleLogout,
+      }),
+      [user, isLoading, mutate, handleLogout]
+   );
 
    return (
-      <AuthContext.Provider
-         value={{
-            user: user ?? null,
-            isLoading,
-            mutate,
-            handleLogout,
-         }}
-      >
+      <AuthContext.Provider value={contextValue}>
          {children}
       </AuthContext.Provider>
    );

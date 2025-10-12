@@ -1,15 +1,17 @@
 import axiosInstance from "@/api/axiosInstance";
 
 // Generic queryparams filters
-export const buildQueryParams = (filters: any) => {
+export const buildQueryParams = <T extends Record<string, any>>(
+   filters?: T
+): URLSearchParams => {
    const params = new URLSearchParams();
 
-   if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-         if (value !== null && value !== undefined && value !== "") {
-            params.append(key, value.toString());
-         }
-      });
+   if (!filters) return params;
+
+   for (const [key, value] of Object.entries(filters)) {
+      if (value !== null && value !== undefined && value !== "") {
+         params.append(key, String(value));
+      }
    }
 
    return params;

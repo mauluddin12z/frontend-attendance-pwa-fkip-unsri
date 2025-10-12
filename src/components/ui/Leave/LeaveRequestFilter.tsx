@@ -25,7 +25,7 @@ const filterLabels: { label: string; value: LeaveFilterType }[] = [
 export default function LeaveRequestFilter({
    activeFilter,
    onChange,
-}: LeaveRequestFilterProps) {
+}: Readonly<LeaveRequestFilterProps>) {
    // Generate button styles based on active filter
    const getButtonClass = (filter: LeaveFilterType) =>
       `flex justify-center items-center text-sm px-3 py-1 rounded-md cursor-pointer ${

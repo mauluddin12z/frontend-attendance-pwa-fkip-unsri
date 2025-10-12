@@ -5,14 +5,16 @@ const AttendanceCard = ({
    icon,
    label,
    time,
+   description,
    isLoading,
 }: {
    icon: React.ReactNode;
    label: string;
    time: string;
+   description?: string;
    isLoading: boolean;
 }) => {
-   const displayTime = isLoading ? "Loading..." : time ? time : "---";
+   const displayTime = isLoading ? "Loading..." : time || "---";
    return (
       <div className="w-full h-32 bg-white shadow p-4 rounded-lg relative">
          <div className="p-2 w-10 h-10 bg-blue-100 rounded-lg absolute top-2 left-2">
@@ -29,6 +31,9 @@ const AttendanceCard = ({
             >
                {displayTime}
             </time>
+            <div className="text-xs text-gray-400 text-center">
+               {description}
+            </div>
          </div>
       </div>
    );

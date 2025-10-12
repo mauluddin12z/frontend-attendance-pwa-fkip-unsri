@@ -41,7 +41,7 @@ const AttendanceListCard: React.FC<AttendanceListCardProps> = ({
 
    return (
       <div className="relative overflow-clip bg-white border border-gray-200 rounded-lg p-4 mb-2 w-full">
-         <div className="flex justify-between items-center">
+         <div className="flex justify-between gap-x-10 items-center">
             <span className="font-medium text-sm text-gray-700">
                {customMoment(day).format("D MMMM YYYY")}
             </span>

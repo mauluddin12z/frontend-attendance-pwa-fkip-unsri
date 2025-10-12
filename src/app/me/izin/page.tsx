@@ -1,17 +1,16 @@
 "use client";
-import MobileLayout from "@/components/layout/mobile/MobileLayout";
 import LeaveDashboardCard from "@/components/ui/Leave/LeaveDashboardCard";
-import LeaveRequestFilter from "@/components/ui/Leave/LeaveRequestFilter";
+import LeaveRequestFilter, {
+   LeaveFilterType,
+} from "@/components/ui/Leave/LeaveRequestFilter";
 import LeaveRequestList from "@/components/ui/Leave/LeaveRequestList";
 import { useAuth } from "@/context/AuthContext";
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { LeaveFilterType } from "@/components/ui/Leave/LeaveRequestFilter";
-import { useUserLeaveRequests } from "@/hooks/useLeaveRequests";
-import { LeaveRequest } from "@/types";
 import HeaderTitle from "@/components/ui/HeaderTitle";
+import { useUserLeaveRequests } from "@/hooks/leave-request";
 
 export default function LeaveDashboardPage() {
    const { user } = useAuth();
@@ -61,7 +60,7 @@ export default function LeaveDashboardPage() {
    };
 
    return (
-      <MobileLayout>
+      <>
          {/* Header */}
          <section className="flex justify-between items-center px-4 pt-6">
             <HeaderTitle title="Pengajuan Izin" />
@@ -114,6 +113,6 @@ export default function LeaveDashboardPage() {
                refetchAll={refetchAll}
             />
          </section>
-      </MobileLayout>
+      </>
    );
 }

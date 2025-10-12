@@ -26,18 +26,34 @@ export function middleware(req: NextRequest) {
    const { pathname } = req.nextUrl;
    const userAgent = req.headers.get("user-agent");
 
-   // Not logged in and trying to access protected route
+   // Not logged in and trying to access protected routes
    if (
       !isLoggedIn &&
-      (pathname.startsWith("/home") || pathname.startsWith("/me"))
+      (pathname.startsWith("/administrator") || pathname.startsWith("/me"))
    ) {
       return NextResponse.redirect(new URL("/login", req.url));
    }
 
-   // Logged in and accessing login page
+   // Logged in and trying to access login page
    if (isLoggedIn && pathname === "/login") {
-      const redirectTo = isMobileUserAgent(userAgent) ? "/me/home" : "/home";
+      const redirectTo = isMobileUserAgent(userAgent)
+         ? "/me/home"
+         : "/administrator/dashboard";
       return NextResponse.redirect(new URL(redirectTo, req.url));
+   }
+
+   // If the path starts with '/administrator', check if the user is an admin
+   if (pathname.startsWith("/administrator")) {
+      if (!token) {
+         return NextResponse.redirect(new URL("/login", req.url)); // Redirect to login if no token
+      }
+
+      const role = getRoleFromToken(token);
+
+      // Check if the role is 'admin'
+      if (role !== "admin") {
+         return NextResponse.redirect(new URL("/unauthorized", req.url));
+      }
    }
 
    // Allow the request
@@ -46,5 +62,5 @@ export function middleware(req: NextRequest) {
 
 // Middleware will match these routes
 export const config = {
-   matcher: ["/home", "/login", "/me/:path*"],
+   matcher: ["/login", "/me/:path*", "/administrator/:path*"],
 };

@@ -12,7 +12,7 @@ interface NavigationButtonProps {
 
 const NavigationButton: React.FC<NavigationButtonProps> = ({
    bgColor = "bg-white",
-   borderColor= "border-gray-200",
+   borderColor = "border-gray-200",
    direction,
    onClick,
    className = "",
@@ -25,7 +25,7 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
          type="button"
          onClick={onClick}
          aria-label={label}
-         className={`p-2 ${bgColor} border ${borderColor} rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition ${className}`}
+         className={`p-2 ${bgColor} border ${borderColor} rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-500 transition ${className} cursor-pointer`}
       >
          <FontAwesomeIcon icon={icon} size="lg" />
       </button>

@@ -25,6 +25,7 @@ export interface Attendance {
    date: string;
    attendanceStatusId: number;
    notes: string;
+   user?: User;
    attendanceStatus?: AttendanceStatus;
    attendanceDetails?: AttendanceDetail[];
 }
@@ -83,6 +84,13 @@ export interface LeaveRequest {
    createdAt?: string;
 }
 
+// Types
+export interface AttendanceForm {
+   userId?: string;
+   date?: string;
+   attendanceStatusId?: string;
+   notes?: string;
+}
 // Types
 export interface LeaveRequestForm {
    userId: string;

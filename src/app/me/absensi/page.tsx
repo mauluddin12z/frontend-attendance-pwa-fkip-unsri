@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useMemo, useCallback } from "react";
-import MobileLayout from "@/components/layout/mobile/MobileLayout";
 import CalendarMonths from "@/components/ui/Calendar/CalendarMonths";
-import { useAttendanceByUser } from "@/hooks/useAttendances";
 import { useAuth } from "@/context/AuthContext";
 import { Attendance } from "@/types";
 import AttendanceList from "@/components/ui/Attendance/AttendanceList";
@@ -12,6 +10,7 @@ import ViewTypeToggle from "@/components/ui/Attendance/ViewTypeToggle";
 import getMonthStartAndEnd from "@/utils/getMonthStartAndEnd";
 import SortToggle from "@/components/ui/Attendance/SortToggle";
 import HeaderTitle from "@/components/ui/HeaderTitle";
+import { useAttendanceByUser } from "@/hooks/attendance";
 
 export default function Page() {
    const { user } = useAuth();
@@ -40,6 +39,7 @@ export default function Page() {
          startDate: start.format("YYYY-MM-DD"),
          endDate: end.format("YYYY-MM-DD"),
          include: "details,status",
+         size:31
       };
    }, [currentDate]);
 
@@ -92,7 +92,7 @@ export default function Page() {
    }, [filter, daysInMonth, getAttendanceForDay]);
 
    return (
-      <MobileLayout>
+      <>
          {/* Header */}
          <HeaderTitle title="Absensi" className="px-4 pt-6" />
 
@@ -145,6 +145,6 @@ export default function Page() {
                </section>
             </div>
          </section>
-      </MobileLayout>
+      </>
    );
 }

@@ -3,10 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 interface PaginationPropsInterface {
-   totalItems: number;
    totalPages: number;
    currentPage: number;
-   pageSize: number;
    hasNextPage: boolean;
    isLoading: boolean;
    onPageChange: (page: number) => void;
@@ -18,7 +16,7 @@ export default function Pagination({
    hasNextPage,
    isLoading,
    onPageChange,
-}: PaginationPropsInterface) {
+}: Readonly<PaginationPropsInterface>) {
    const pageNumbers = Array.from(
       { length: totalPages },
       (_, index) => index + 1
@@ -74,7 +72,7 @@ export default function Pagination({
                   className={`px-3 py-2 leading-tight bg-white border border-gray-300 rounded-l-lg ${
                      currentPage <= 1
                         ? "text-gray-400"
-                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
                   }`}
                   onClick={() => handlePageChange(currentPage - 1)}
                >
@@ -89,8 +87,8 @@ export default function Pagination({
                      className={`${
                         currentPage === page
                            ? "text-white border border-gray-300 bg-blue-500"
-                           : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                     } px-3 py-2 leading-tight cursor-pointer`}
+                           : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
+                     } px-3 py-2 leading-tight`}
                      onClick={() => handlePageChange(page)}
                      disabled={isLoading}
                   >

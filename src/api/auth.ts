@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import axiosInstance from "./axiosInstance";
 import toast from "react-hot-toast";
 import { handleApiError } from "@/utils/handleApiError";
@@ -8,17 +8,25 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_MY_BACKEND_URL as string;
 export const refreshAccessToken = async (): Promise<string | null> => {
    try {
       // Make the request to refresh the token in the cookies
-      await axios.post(
+      const response = await axios.post(
          `${API_BASE_URL}/auth/refresh-token`,
          {},
          {
             withCredentials: true, // Ensure cookies are sent and received
          }
       );
+
+      // If response contains the new access token, return it
+      if (response.data?.accessToken) {
+         return response.data.accessToken;
+      }
+
+      // If no access token in the response, return null
+      toast.error("No access token received in response");
       return null;
    } catch (error: any) {
-      toast.error("Failed to refresh access token", error?.message || error);
-      window.location.href = "/login";
+      toast.error(`Failed to refresh access token: ${error?.message || error}`);
+      window.location.href = "/login"; // Redirect to login on failure
       return null;
    }
 };
