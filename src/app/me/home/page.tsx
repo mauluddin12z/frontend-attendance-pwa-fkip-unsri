@@ -3,9 +3,6 @@
 import React, { useMemo, useCallback } from "react";
 import SwipeToAction from "@/components/ui/Home/SwipeToAction";
 import Calendar from "@/components/ui/Calendar/HorizontalCalendar";
-import CheckInIcon from "@/assets/CheckInIcon";
-import CheckOutIcon from "@/assets/CheckOutIcon";
-import TimeIcon from "@/assets/TimeIcon";
 import { useAuth } from "@/context/AuthContext";
 import { useAttendanceByUser } from "@/hooks/attendance/useAttendances";
 import { useHandleCheckIn } from "@/hooks/attendance/useHandleCheckIn";
@@ -20,6 +17,9 @@ import LocationInfo from "@/components/ui/Home/LocationInfo";
 import customMoment from "@/utils/customMoment";
 import { useHolidays } from "@/hooks/holiday/useHolidays";
 import { Holiday } from "@/types";
+import TimeIcon from "@/assets/TimeIcon";
+import CheckInIcon from "@/assets/CheckInIcon";
+import CheckOutIcon from "@/assets/CheckOutIcon";
 
 const Page = () => {
    // Common Values
