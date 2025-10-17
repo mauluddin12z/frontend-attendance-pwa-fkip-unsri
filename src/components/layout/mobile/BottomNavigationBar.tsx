@@ -1,10 +1,11 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import HomeIcon from "@/assets/NavigationIcon/HomeIcon.js";
-import AttendanceIcon from "@/assets/NavigationIcon/AttendanceIcon.js";
-import LeaveIcon from "@/assets/NavigationIcon/LeaveIcon.js";
-import UserIcon from "@/assets/NavigationIcon/UserIcon.js";
+import HomeIcon from "@/assets/NavigationIcon/HomeIcon";
+import AttendanceIcon from "@/assets/NavigationIcon/AttendanceIcon";
+import LeaveIcon from "@/assets/NavigationIcon/LeaveIcon";
+import UserIcon from "@/assets/NavigationIcon/UserIcon";
+
 
 export default function BottomNavigationBar() {
    const pathname = usePathname();
