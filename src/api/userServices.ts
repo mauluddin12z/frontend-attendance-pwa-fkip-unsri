@@ -30,7 +30,7 @@ export const fetchUserById = async (userId: number) => {
 // Update user data
 export const createUser = async (userData: FormData) => {
    try {
-      const response = await axiosInstance.post("/user", userData);
+      const response = await axiosInstance.post("/auth/register", userData);
       return response.data;
    } catch (error: any) {
       throw handleApiError(error, "Error creating user");

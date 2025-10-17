@@ -4,7 +4,7 @@ import { attendanceStatusStyle } from "@/utils/attendanceStatusStyle";
 import Link from "next/link";
 
 interface AttendanceTableProps {
-   attendances: any;
+   attendances: Attendance[];
    attendanceLoading: boolean;
    openModal: (
       attendance: Attendance,
@@ -100,7 +100,7 @@ const AttendanceTable = ({
                      <LoadingSpinner />
                   </td>
                </tr>
-            ) : attendances?.length === 0 ? (
+            ) : !attendances ? (
                <tr>
                   <td colSpan={7} className="px-6 py-4 text-center">
                      Tidak ada data yang ditemukan

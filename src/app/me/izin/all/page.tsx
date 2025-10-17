@@ -14,12 +14,12 @@ export default function LeaveAllPage() {
 
    const pageSize = 10;
    const [page, setPage] = useState(1);
-   const { all, approved, rejected, canceled, pending } = useUserLeaveRequests(
+   const { all, approved, rejected, cancelled, pending } = useUserLeaveRequests(
       user?.id,
       page,
       pageSize
    );
-   const [activeFilter, setActiveFilter] = useState<LeaveFilterType>("all");
+   const [activeFilter, setActiveFilter] = useState<LeaveFilterType>("semua");
 
    // Memoizing loading state to prevent unnecessary recomputations
    const isLoading = useMemo(
@@ -27,13 +27,13 @@ export default function LeaveAllPage() {
          all.isLoading ||
          approved.isLoading ||
          rejected.isLoading ||
-         canceled.isLoading ||
+         cancelled.isLoading ||
          pending.isLoading,
       [
          all.isLoading,
          approved.isLoading,
          rejected.isLoading,
-         canceled.isLoading,
+         cancelled.isLoading,
          pending.isLoading,
       ]
    );
@@ -41,15 +41,15 @@ export default function LeaveAllPage() {
    // Function to get filtered leave requests based on filter type
    const getFilteredRequests = () => {
       switch (activeFilter) {
-         case "all":
+         case "semua":
             return all.userLeaveRequests;
-         case "approved":
+         case "disetujui":
             return approved.userLeaveRequests;
-         case "rejected":
+         case "ditolak":
             return rejected.userLeaveRequests;
-         case "canceled":
-            return canceled.userLeaveRequests;
-         case "pending":
+         case "dibatalkan":
+            return cancelled.userLeaveRequests;
+         case "menunggu persetujuan":
             return pending.userLeaveRequests;
          default:
             return [];
@@ -63,7 +63,7 @@ export default function LeaveAllPage() {
          activeFilter,
          approved.userLeaveRequests,
          rejected.userLeaveRequests,
-         canceled.userLeaveRequests,
+         cancelled.userLeaveRequests,
          pending.userLeaveRequests,
       ]
    );
@@ -73,7 +73,7 @@ export default function LeaveAllPage() {
          all.mutate(),
          approved.mutate(),
          rejected.mutate(),
-         canceled.mutate(),
+         cancelled.mutate(),
       ]);
    };
 

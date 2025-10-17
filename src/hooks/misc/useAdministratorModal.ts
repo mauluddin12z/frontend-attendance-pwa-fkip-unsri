@@ -1,18 +1,29 @@
-import { Attendance } from "@/types";
 import { useCallback, useState } from "react";
 
-type ModalState = {
+// General modal state and types
+export type ModalState = {
    isDetailModalOpen: boolean;
    isAddModalOpen: boolean;
    isEditModalOpen: boolean;
    isDeleteModalOpen: boolean;
    isFilterModalOpen: boolean;
+   isApproveModalOpen: boolean;
+   isRejectModalOpen: boolean;
 };
 
-export default function useAttendanceModal(
-   setSelectedUser: any,
-   setSelectedAttendance: any,
-   reset: any
+type ModalTypes =
+   | "detail"
+   | "add"
+   | "edit"
+   | "delete"
+   | "filter"
+   | "approve"
+   | "reject";
+
+// General modal hook
+export default function useModal<T>(
+   setSelectedItem?: (data: T | null) => void,
+   resetForm?: () => void
 ) {
    const [modalState, setModalState] = useState<ModalState>({
       isDetailModalOpen: false,
@@ -20,13 +31,13 @@ export default function useAttendanceModal(
       isEditModalOpen: false,
       isDeleteModalOpen: false,
       isFilterModalOpen: false,
+      isApproveModalOpen: false,
+      isRejectModalOpen: false,
    });
+
    const openModal = useCallback(
-      (
-         attendance: Attendance | undefined,
-         modalType: "detail" | "add" | "edit" | "delete" | "filter"
-      ) => {
-         setSelectedAttendance(attendance ?? null);
+      (item: T | undefined, modalType: ModalTypes) => {
+         if (setSelectedItem) setSelectedItem(item ?? null);
 
          setModalState({
             isDetailModalOpen: modalType === "detail",
@@ -34,29 +45,26 @@ export default function useAttendanceModal(
             isEditModalOpen: modalType === "edit",
             isDeleteModalOpen: modalType === "delete",
             isFilterModalOpen: modalType === "filter",
+            isApproveModalOpen: modalType === "approve",
+            isRejectModalOpen: modalType === "reject",
          });
       },
-      []
+      [setSelectedItem]
    );
 
-   // Close modal and reset form
    const closeModal = useCallback(() => {
-      setSelectedAttendance(null);
-      setSelectedUser(null);
+      if (setSelectedItem) setSelectedItem(null);
+      if (resetForm) resetForm();
       setModalState({
          isDetailModalOpen: false,
          isAddModalOpen: false,
          isEditModalOpen: false,
          isDeleteModalOpen: false,
          isFilterModalOpen: false,
+         isApproveModalOpen: false,
+         isRejectModalOpen: false,
       });
-      reset({
-         userId: "",
-         date: "",
-         attendanceStatusId: "",
-         notes: "",
-      });
-   }, [reset]);
+   }, [setSelectedItem, resetForm, setModalState]);
 
    return { modalState, openModal, closeModal };
 }

@@ -20,13 +20,10 @@ export const refreshAccessToken = async (): Promise<string | null> => {
       if (response.data?.accessToken) {
          return response.data.accessToken;
       }
-
-      // If no access token in the response, return null
-      toast.error("No access token received in response");
       return null;
    } catch (error: any) {
       toast.error(`Failed to refresh access token: ${error?.message || error}`);
-      window.location.href = "/login"; // Redirect to login on failure
+      window.location.href = "/login";
       return null;
    }
 };

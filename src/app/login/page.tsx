@@ -9,11 +9,7 @@ import LoginVector from "@/assets/LoginVector.svg";
 import { isMobile } from "react-device-detect";
 import { useState } from "react";
 import { mapJoiErrorsToForm } from "@/utils/mapJoiErrorToForm";
-
-type LoginFormData = {
-   username: string;
-   password: string;
-};
+import { Login } from "@/types";
 
 export default function Page() {
    const router = useRouter();
@@ -22,11 +18,11 @@ export default function Page() {
       handleSubmit,
       formState: { errors },
       setError,
-   } = useForm<LoginFormData>({ mode: "onTouched" });
+   } = useForm<Login>({ mode: "onTouched" });
 
    const [isSubmitting, setIsSubmitting] = useState(false);
 
-   const onSubmit = async (data: LoginFormData) => {
+   const onSubmit = async (data: Login) => {
       const toastId = toast.loading("Sedang login...");
       setIsSubmitting(true);
 

@@ -4,6 +4,7 @@ type FormFieldProps = {
    label: string;
    error?: string;
    register: UseFormRegisterReturn;
+   placeholder?: string;
    type?: string;
 };
 
@@ -11,6 +12,7 @@ export default function FormField({
    label,
    error,
    register,
+   placeholder,
    type = "text",
 }: Readonly<FormFieldProps>) {
    return (
@@ -22,8 +24,9 @@ export default function FormField({
             {label}
          </label>
          <input
-            type={type}
             id={register.name}
+            type={type}
+            placeholder={placeholder}
             {...register}
             className={`w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                error ? "border-red-500" : "border-gray-300"

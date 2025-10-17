@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       shouldFetch ? "/auth/session" : null,
       fetchSession
    );
+
 // Logout handler
 const handleLogout = async () => {
    const toastId = toast.loading("Sedang logout...");

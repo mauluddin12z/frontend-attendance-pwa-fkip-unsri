@@ -8,7 +8,7 @@ import Loading from "@/app/loading";
 import { faEdit, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HeaderTitle from "@/components/ui/HeaderTitle";
-import LogoutModal from "@/components/ui/LogoutModal";
+import LogoutModal from "@/components/ui/Modal/LogoutModal";
 
 export default function Page() {
    const {

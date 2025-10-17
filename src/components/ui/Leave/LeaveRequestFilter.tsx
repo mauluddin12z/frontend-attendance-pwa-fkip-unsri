@@ -2,11 +2,11 @@
 import React from "react";
 
 export type LeaveFilterType =
-   | "all"
-   | "pending"
-   | "approved"
-   | "rejected"
-   | "canceled";
+   | "semua"
+   | "menunggu persetujuan"
+   | "disetujui"
+   | "ditolak"
+   | "dibatalkan";
 
 interface LeaveRequestFilterProps {
    activeFilter: LeaveFilterType;
@@ -15,11 +15,11 @@ interface LeaveRequestFilterProps {
 
 // Label list for filter buttons (Indonesian UI)
 const filterLabels: { label: string; value: LeaveFilterType }[] = [
-   { label: "Semua", value: "all" },
-   { label: "Menunggu", value: "pending" },
-   { label: "Disetujui", value: "approved" },
-   { label: "Ditolak", value: "rejected" },
-   { label: "Dibatalkan", value: "canceled" },
+   { label: "Semua", value: "semua" },
+   { label: "Menunggu Persetujuan", value: "menunggu persetujuan" },
+   { label: "Disetujui", value: "disetujui" },
+   { label: "Ditolak", value: "ditolak" },
+   { label: "Dibatalkan", value: "dibatalkan" },
 ];
 
 export default function LeaveRequestFilter({

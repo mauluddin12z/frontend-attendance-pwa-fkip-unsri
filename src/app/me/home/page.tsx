@@ -55,6 +55,8 @@ const Page = () => {
       todayWorkingHours && todayWorkingHours !== "Libur"
    );
 
+   console.log(workingHours);
+
    // Attendance
    // Factory for attendance filters
    const attendanceFilter = useCallback(

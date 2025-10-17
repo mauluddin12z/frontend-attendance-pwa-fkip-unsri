@@ -63,10 +63,14 @@ export const createLeaveRequest = async (leaveRequestData: FormData) => {
 };
 
 // Approve a leave request
-export const approveLeaveRequest = async (leaveRequestId: number | string) => {
+export const approveLeaveRequest = async (
+   leaveRequestId: number | string,
+   leaveRequestData: FormData
+) => {
    try {
       const response = await axiosInstance.patch(
-         `/approve-leave-request/${leaveRequestId}`
+         `/approve-leave-request/${leaveRequestId}`,
+         leaveRequestData
       );
       return response.data;
    } catch (error: any) {
@@ -75,10 +79,14 @@ export const approveLeaveRequest = async (leaveRequestId: number | string) => {
 };
 
 // Reject a leave request
-export const rejectLeaveRequest = async (leaveRequestId: number | string) => {
+export const rejectLeaveRequest = async (
+   leaveRequestId: number | string,
+   leaveRequestData: FormData
+) => {
    try {
       const response = await axiosInstance.patch(
-         `/reject-leave-request/${leaveRequestId}`
+         `/reject-leave-request/${leaveRequestId}`,
+         leaveRequestData
       );
       return response.data;
    } catch (error: any) {

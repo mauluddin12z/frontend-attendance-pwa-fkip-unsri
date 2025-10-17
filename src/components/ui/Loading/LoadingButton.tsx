@@ -1,9 +1,13 @@
 import React from "react";
 interface LoadingButtonProps {
    readonly label?: string;
+   readonly className?: string;
 }
 
-export default function LoadingButton({ label }: LoadingButtonProps) {
+export default function LoadingButton({
+   label,
+   className = "fill-white",
+}: LoadingButtonProps) {
    return (
       <div className="flex gap-2 justify-center items-center">
          <div className="flex items-center justify-center">
@@ -11,7 +15,7 @@ export default function LoadingButton({ label }: LoadingButtonProps) {
                <svg
                   width="20"
                   height="20"
-                  className="animate-spin fill-blue-400"
+                  className={`animate-spin ${className}`}
                   viewBox="0 0 1792 1792"
                   xmlns="http://www.w3.org/2000/svg"
                >

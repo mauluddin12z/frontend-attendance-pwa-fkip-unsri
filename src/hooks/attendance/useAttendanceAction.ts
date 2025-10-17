@@ -8,8 +8,8 @@ import {
 } from "./useAttendances";
 
 export default function useAttendanceAction(
-   mutate: any,
-   closeModal: any,
+   mutate: () => void,
+   closeModal: () => void,
    setError: any
 ) {
    const { createAttendance, isCreating } = useCreateAttendance();
@@ -41,7 +41,6 @@ export default function useAttendanceAction(
          // Handle data for add or edit actions
          if (action === "add" || action === "edit") {
             if (data) {
-               console.log(data);
                const { userId, date, attendanceStatusId, notes } = data;
                formData = createFormData({
                   userId,
@@ -73,7 +72,7 @@ export default function useAttendanceAction(
          }
 
          // Refresh attendance data and close modal
-         await mutate();
+         mutate();
          closeModal();
 
          // Success toast

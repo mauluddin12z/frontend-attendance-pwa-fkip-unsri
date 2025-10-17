@@ -1,13 +1,22 @@
 // User Interface (for login or user info)
+export interface Login {
+   username: string;
+   password: string;
+}
 export interface User {
    id: number;
    fullName: string;
    nip: string;
    email: string;
    phoneNumber: string;
-   username: string;
-   password: string;
+   isActive: number;
    roleId: number;
+   role: Role;
+}
+export interface Role {
+   id: number;
+   name: string;
+   description?: string;
 }
 export interface Session {
    id: number;
@@ -76,12 +85,76 @@ export interface LeaveRequest {
    startDate: string;
    endDate: string;
    reason: string;
-   status?: "pending" | "approved" | "rejected" | "canceled";
+   status?: "menunggu persetujuan" | "disetujui" | "ditolak" | "dibatalkan";
    approverId?: number | null;
    approvalNotes?: string | null;
    approver?: Approver;
    leaveUser?: LeaveUser;
    createdAt?: string;
+}
+export interface WorkingHour {
+   id: number;
+   dayOfWeek: string;
+   startTime: string;
+   endTime: string;
+   gracePeriodMinutes: string;
+   isActive: boolean;
+}
+export interface WorkingHourForm {
+   dayOfWeek: string;
+   startTime: string;
+   endTime: string;
+   gracePeriodMinutes: string;
+   isActive: string;
+}
+
+export interface Holiday {
+   id: number;
+   name: string;
+   date: string;
+   description?: string | null;
+}
+
+export interface HolidayForm {
+   name: string;
+   date: string;
+   description?: string | null;
+}
+
+export interface Location {
+   id: number;
+   name: string;
+   latitude: number;
+   longitude: number;
+   radiusMeters: number;
+   isActive: boolean;
+}
+export interface LocationForm {
+   name: string;
+   latitude: string;
+   longitude: string;
+   radiusMeters: string;
+   isActive: string;
+}
+export interface AuditLog {
+   id: number;
+   userId: number;
+   action: string;
+   details: object;
+   createdAt: string;
+   user: User;
+}
+
+// Types
+export interface UserForm {
+   roleId?: string;
+   fullName?: string;
+   nip?: string;
+   email?: string;
+   phoneNumber?: string;
+   password?: string;
+   confirmPassword?: string;
+   isActive?: string;
 }
 
 // Types
@@ -91,6 +164,7 @@ export interface AttendanceForm {
    attendanceStatusId?: string;
    notes?: string;
 }
+
 // Types
 export interface LeaveRequestForm {
    userId: string;
@@ -98,9 +172,7 @@ export interface LeaveRequestForm {
    endDate: string;
    leaveType: string;
    reason: string;
-}
-export interface Holiday {
-   name: string;
-   date: string;
-   description: string;
+   status?: string;
+   approverId?: string;
+   approvalNotes?: string;
 }

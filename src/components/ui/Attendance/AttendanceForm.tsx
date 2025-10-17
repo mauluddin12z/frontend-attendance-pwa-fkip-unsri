@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import Select, { SingleValue, FilterOptionOption } from "react-select";
 import { AttendanceStatus, User } from "@/types";
 import { TextareaField } from "../Form/TextAreaField";
 import FormField from "../Form/FormField";
 import { SelectField } from "../Form/SelectField";
-import { Controller } from "react-hook-form";
+import {
+   Control,
+   Controller,
+   UseFormRegister,
+   UseFormWatch,
+} from "react-hook-form";
+import { useAttendanceStatuses } from "@/hooks/attendance";
 
 interface AttendanceFormProps {
-   formType: string;
-   register: any;
-   control: any;
-   watch?: any;
    errors: any;
-   attendanceStatuses: AttendanceStatus[];
-   attendanceStatusLoading: boolean;
+   register: UseFormRegister<any>;
+   watch?: UseFormWatch<any>;
+   control: Control<any>;
    users?: User[];
    userLoading?: boolean;
    setSearchUser?: React.Dispatch<React.SetStateAction<string>>;
@@ -26,13 +29,13 @@ const AttendanceForm = ({
    register,
    control,
    errors,
-   attendanceStatuses,
-   attendanceStatusLoading,
    users,
    userLoading,
    setSearchUser,
    selectedUser,
 }: AttendanceFormProps) => {
+   const { attendanceStatuses, isLoading } = useAttendanceStatuses();
+
    // Mapping userOptions
    const userOptions =
       users?.map((user: User) => ({
@@ -40,6 +43,10 @@ const AttendanceForm = ({
          label: user.fullName,
          nip: user.nip,
       })) ?? [];
+
+   // Store the selected user value (value and label)
+   const [selectedUserValue, setSelectedUserValue] =
+      useState<SelectOption | null>(null);
 
    return (
       <form className="flex flex-col gap-4 p-4 w-96">
@@ -50,42 +57,54 @@ const AttendanceForm = ({
             <Controller
                name="userId"
                control={control}
-               render={({ field }) => (
-                  <Select
-                     {...field}
-                     id="userId"
-                     options={userOptions}
-                     isLoading={userLoading}
-                     placeholder={
-                        selectedUser?.fullName || "Cari atau pilih user"
-                     }
-                     onInputChange={(newValue) => setSearchUser?.(newValue)}
-                     noOptionsMessage={() => "No users found"}
-                     className={`react-select-container ${
-                        errors.userId ? "border-red-500" : "border-gray-300"
-                     }`}
-                     isDisabled={!!selectedUser}
-                     filterOption={(
-                        candidate: FilterOptionOption<SelectOption>,
-                        input: string
-                     ) => {
-                        const lowerInput = input.toLowerCase();
-                        const lowerLabel = candidate.label.toLowerCase();
-                        const lowerNip = candidate.data.nip.toLowerCase();
-
-                        return (
-                           lowerLabel.includes(lowerInput) ||
-                           lowerNip.includes(lowerInput)
-                        );
-                     }}
-                     onChange={(selectedOption: SingleValue<SelectOption>) => {
-                        field.onChange(selectedOption?.value);
-                        if (selectedOption) {
-                           setSearchUser?.(selectedOption.label);
+               rules={{ required: "User wajib dipilih" }}
+               render={({ field }) => {
+                  return (
+                     <Select
+                        {...field}
+                        inputId="userId"
+                        options={userOptions}
+                        isLoading={userLoading}
+                        placeholder={
+                           selectedUser?.fullName ||
+                           selectedUserValue?.label ||
+                           "Cari atau pilih user"
                         }
-                     }}
-                  />
-               )}
+                        onInputChange={(newValue) => setSearchUser?.(newValue)}
+                        noOptionsMessage={() => "No users found"}
+                        className={`react-select-container ${
+                           errors.userId ? "border-red-500" : "border-gray-300"
+                        }`}
+                        isDisabled={!!selectedUser || !!selectedUserValue}
+                        filterOption={(
+                           candidate: FilterOptionOption<SelectOption>,
+                           input: string
+                        ) => {
+                           const lowerInput = input.toLowerCase();
+                           const lowerLabel = candidate.label.toLowerCase();
+                           const lowerNip = candidate.data?.nip?.toLowerCase();
+
+                           return (
+                              lowerLabel.includes(lowerInput) ||
+                              lowerNip?.includes(lowerInput)
+                           );
+                        }}
+                        onChange={(
+                           selectedOption: SingleValue<SelectOption>
+                        ) => {
+                           // Handle the selection change
+                           setSelectedUserValue(selectedOption);
+
+                           if (selectedOption) {
+                              field.onChange(selectedOption.value);
+                              setSearchUser?.(selectedOption.label);
+                           } else {
+                              field.onChange(null);
+                           }
+                        }}
+                     />
+                  );
+               }}
             />
             {errors.userId?.message && (
                <p className="text-red-500 text-sm mt-1">
@@ -93,6 +112,7 @@ const AttendanceForm = ({
                </p>
             )}
          </div>
+
          <FormField
             label="Tanggal"
             type="date"
@@ -108,13 +128,15 @@ const AttendanceForm = ({
                required: "Status Absensi wajib dipilih",
             })}
             options={
-               attendanceStatusLoading
+               isLoading
                   ? [{ value: "0", label: "Loading..." }]
-                  : attendanceStatuses?.map((status: AttendanceStatus) => ({
-                       key: status.id,
-                       value: status.id.toString(),
-                       label: status.name,
-                    })) ?? []
+                  : attendanceStatuses?.data?.map(
+                       (status: AttendanceStatus) => ({
+                          key: status.id,
+                          value: status.id.toString(),
+                          label: status.name,
+                       })
+                    ) ?? []
             }
          />
          <TextareaField

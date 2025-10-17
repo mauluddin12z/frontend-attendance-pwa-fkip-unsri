@@ -1,32 +1,28 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useForm } from "react-hook-form";
 
-// Components
-import HeaderTitle from "@/components/ui/HeaderTitle";
-import AdminTableToolbar from "@/components/ui/AdminTableToolbar";
-import AttendanceSummaryCardList from "@/components/ui/Attendance/AttendanceSummaryCardList";
+import { Attendance, AttendanceForm, User } from "@/types";
+import Pagination from "@/components/ui/Pagination";
 import AttendanceTable from "@/components/ui/Attendance/AttendanceTable";
 import AttendanceModals from "@/components/ui/Attendance/AttendanceModals";
 import AttendanceFilterModal from "@/components/ui/Attendance/AttendanceFilterModal";
-import Pagination from "@/components/ui/Pagination";
+import AdminTableToolbar from "@/components/ui/AdminTableToolbar";
 
-//types
-import { Attendance, AttendanceForm, User } from "@/types";
+import { debounceFilterUpdate } from "@/utils/debounce";
 
-// Hooks
 import {
    useAttendanceAction,
    useAttendanceByUser,
-   useAttendanceModal,
    useAttendanceStatuses,
    useAttendanceSummaryCounts,
 } from "@/hooks/attendance";
-import { useUserById, useUsers } from "@/hooks/user";
 
-//utils
-import { debounceFilterUpdate } from "@/utils/debounce";
+import { useUserById, useUsers } from "@/hooks/user";
+import { useAdministratorModal } from "@/hooks/misc";
+import AttendanceSummaryCardList from "@/components/ui/Attendance/AttendanceSummaryCardList";
+import HeaderTitle from "@/components/ui/HeaderTitle";
 
 interface PageProps {
    params: Promise<{ slug: string }>;
@@ -35,79 +31,56 @@ interface PageProps {
 export default function Page({ params }: Readonly<PageProps>) {
    // Extract URL params
    const { slug } = use(params);
-
-   // Local State Definitions
-   const [searchQuery, setSearchQuery] = useState<string>("");
-   const [searchUser, setSearchUser] = useState<string>("");
-
-   // Filter for attendance API query
+   // State for attendance search and filters
+   const [searchQuery, setSearchQuery] = useState("");
    const [attendanceFilter, setAttendanceFilter] = useState({
       userId: null,
       attendanceStatusId: null,
-      attendanceStatus: "",
       startDate: "",
       endDate: "",
       fields: null,
       sortBy: "date",
       order: "DESC",
       search: "",
-      include: "status, details, user",
+      attendanceType: "",
+      include: "details,status,user",
    });
 
-   // Filter for user API query
+   // State for user search in filter modals
+   const [searchUser, setSearchUser] = useState("");
    const [userFilter, setUserFilter] = useState({
       search: searchUser,
       size: 5,
       page: 1,
    });
 
-   // Selected attendance and user for modals & editing
-   const [selectedAttendance, setSelectedAttendance] =
-      useState<Attendance | null>(null);
-   const [selectedUser, setSelectedUser] = useState<User | undefined>();
+   // Debounced update for attendance search filter
+   useEffect(() => {
+      debounceFilterUpdate(setAttendanceFilter, 300)(searchQuery, "search");
+   }, [searchQuery]);
 
-   // Data Fetching Hooks
-   const {
-      userAttendances,
-      isLoading: userAttendanceLoading,
-      mutate: userAttendanceMutate,
-   } = useAttendanceByUser(parseInt(slug), attendanceFilter);
+   // Debounced update for user search filter
+   useEffect(() => {
+      debounceFilterUpdate(setUserFilter, 300)(searchUser, "search");
+   }, [searchUser]);
 
-   const {
-      summary,
-      isLoading: summaryLoading,
-      mutateAll: summaryMutate,
-   } = useAttendanceSummaryCounts(parseInt(slug), attendanceFilter);
-
-   const { user, isLoading: userByIdLoading } = useUserById(parseInt(slug));
-   const { users, isLoading: userLoading } = useUsers(userFilter);
-   const { attendanceStatuses, isLoading: attendanceStatusLoading } =
-      useAttendanceStatuses();
-
-   // Combine mutate calls for refresh
-   const mutate = () => {
-      userAttendanceMutate();
-      summaryMutate();
+   // Handle pagination page change
+   const handlePageChange = (page: number) => {
+      setAttendanceFilter((prev) => ({ ...prev, page }));
    };
 
-   // Form Management with React Hook Form
-   const {
-      register,
-      control,
-      handleSubmit,
-      setError,
-      reset,
-      formState: { errors },
-   } = useForm<AttendanceForm>({
-      mode: "onTouched",
-      defaultValues: {
-         userId: "",
-         date: "",
-         attendanceStatusId: "",
-         notes: "",
-      },
-   });
+   // Apply the filters to the global state or parent component
+   const applyFilters = (data: any) => {
+      setAttendanceFilter((prev: any) => ({
+         ...prev,
+         attendanceStatusId: data.attendanceStatusId ?? null,
+         startDate: data.startDate ?? "",
+         endDate: data.endDate ?? "",
+      }));
+      closeModal();
+   };
 
+   // Form setup for attendance filter modal
    const {
       register: filterRegister,
       setValue: filterSetValue,
@@ -122,15 +95,53 @@ export default function Page({ params }: Readonly<PageProps>) {
       },
    });
 
-   // Effects for debounced search/filter updates
-   useEffect(() => {
-      debounceFilterUpdate(setAttendanceFilter, 300)(searchQuery, "search");
-   }, [searchQuery]);
+   // Data fetching hooks
+   const {
+      userAttendances,
+      isLoading: userAttendanceLoading,
+      mutate: userAttendanceMutate,
+   } = useAttendanceByUser(parseInt(slug), attendanceFilter);
 
-   useEffect(() => {
-      debounceFilterUpdate(setUserFilter, 300)(searchUser, "search");
-   }, [searchUser]);
+   const {
+      summary,
+      isLoading: summaryLoading,
+      mutateAll: summaryMutate,
+   } = useAttendanceSummaryCounts(parseInt(slug), attendanceFilter);
+   const { user, isLoading: userByIdLoading } = useUserById(parseInt(slug));
+   const { users, isLoading: userLoading } = useUsers(userFilter);
 
+   // Selected attendance and user state
+   const [selectedAttendance, setSelectedAttendance] =
+      useState<Attendance | null>(null);
+   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+   // Combine mutate calls for refresh
+   const mutate = () => {
+      userAttendanceMutate();
+      summaryMutate();
+   };
+
+   // Default form values for attendance form
+   const attendanceDefaultValues: AttendanceForm = {
+      userId: "",
+      date: "",
+      attendanceStatusId: "",
+      notes: "",
+   };
+
+   // Form setup for attendance add/edit
+   const {
+      register,
+      control,
+      watch,
+      handleSubmit,
+      setError,
+      formState: { errors },
+      reset,
+   } = useForm<AttendanceForm>({
+      mode: "onTouched",
+      defaultValues: attendanceDefaultValues,
+   });
    // Reset form and set selected user when user data is loaded
    useEffect(() => {
       if (user) {
@@ -144,38 +155,30 @@ export default function Page({ params }: Readonly<PageProps>) {
       }
    }, [user, reset]);
 
-   // Reset form when an attendance is selected for editing
+   // Reset attendance form when selected attendance changes
    useEffect(() => {
-      if (selectedAttendance) {
-         reset({
-            userId: selectedAttendance.userId?.toString() ?? "",
-            date: selectedAttendance.date ?? "",
-            attendanceStatusId:
-               selectedAttendance.attendanceStatusId?.toString() ?? "",
-            notes: selectedAttendance.notes ?? "",
-         });
-      }
+      setSelectedUser(selectedAttendance?.user || null);
+      reset({
+         userId: selectedAttendance?.userId?.toString() ?? "",
+         date: selectedAttendance?.date ?? "",
+         attendanceStatusId:
+            selectedAttendance?.attendanceStatusId?.toString() ?? "",
+         notes: selectedAttendance?.notes ?? "",
+      });
    }, [selectedAttendance, reset]);
 
-   // Pagination: Update page on change
-   const handlePageChange = (page: number) => {
-      setAttendanceFilter((prev) => ({ ...prev, page }));
-   };
-
-   // Modal Management Hooks
-   const { modalState, openModal, closeModal } = useAttendanceModal(
-      setSelectedUser,
+   // Modal state and control hooks
+   const { modalState, openModal, closeModal } = useAdministratorModal(
       setSelectedAttendance,
-      reset
+      () => reset(attendanceDefaultValues)
    );
 
-   // Attendance Actions (Create, Update, Delete)
+   // Attendance CRUD actions
    const { handleAction, isCreating, isDeleting, isUpdating } =
       useAttendanceAction(mutate, closeModal, setError);
 
-   // Render Component
    return (
-      <div className="flex flex-col w-full gap-2 p-2 border border-gray-200 rounded-lg">
+      <div className="flex flex-col gap-2 p-2 border border-gray-200 rounded-lg">
          {/* Header with back button and user name */}
          <HeaderTitle
             title={userByIdLoading ? "Loading..." : user?.data?.fullName}
@@ -184,20 +187,22 @@ export default function Page({ params }: Readonly<PageProps>) {
             className="py-2"
          />
 
-         {/* Toolbar, Summary Cards, and Attendance Table */}
+         {/* Toolbar with search and filter/add buttons */}
+         <AdminTableToolbar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            openModalFilter={() => openModal(undefined, "filter")}
+            openModalAdd={() => openModal(undefined, "add")}
+         />
+
+         {/* Summary Dashboard */}
+         <AttendanceSummaryCardList
+            summary={summary}
+            summaryLoading={summaryLoading}
+         />
+
+         {/* Attendance table */}
          <div className="relative overflow-x-auto sm:rounded-lg">
-            <AdminTableToolbar
-               searchQuery={searchQuery}
-               setSearchQuery={setSearchQuery}
-               openModalFilter={() => openModal(undefined, "filter")}
-               openModalAdd={() => openModal(undefined, "add")}
-            />
-
-            <AttendanceSummaryCardList
-               summary={summary}
-               summaryLoading={summaryLoading}
-            />
-
             <AttendanceTable
                attendances={userAttendances?.data}
                attendanceLoading={userAttendanceLoading}
@@ -206,7 +211,7 @@ export default function Page({ params }: Readonly<PageProps>) {
             />
          </div>
 
-         {/* Pagination controls */}
+         {/* Pagination component */}
          <Pagination
             totalPages={userAttendances?.pagination?.totalPages ?? 1}
             currentPage={userAttendances?.pagination?.currentPage ?? 1}
@@ -215,7 +220,7 @@ export default function Page({ params }: Readonly<PageProps>) {
             onPageChange={handlePageChange}
          />
 
-         {/* Attendance Modals for Add/Edit/Delete */}
+         {/* Attendance modals: add, edit, delete, detail */}
          <AttendanceModals
             modalState={modalState}
             closeModal={closeModal}
@@ -230,28 +235,25 @@ export default function Page({ params }: Readonly<PageProps>) {
             isCreating={isCreating}
             isUpdating={isUpdating}
             isDeleting={isDeleting}
-            selectedAttendance={selectedAttendance}
-            attendanceStatuses={attendanceStatuses?.data}
-            attendanceStatusLoading={attendanceStatusLoading}
+            selectedAttendance={selectedAttendance!}
+            selectedUser={selectedUser!}
             users={users?.data}
             userLoading={userLoading}
             setSearchUser={setSearchUser}
             errors={errors}
             register={register}
             control={control}
-            selectedUser={selectedUser}
          />
 
-         {/* Attendance Filter Modal */}
+         {/* Filter modal for attendance list filtering */}
          {modalState.isFilterModalOpen && (
             <AttendanceFilterModal
                isOpen={modalState.isFilterModalOpen}
-               attendanceStatuses={attendanceStatuses?.data}
                closeModal={closeModal}
                filterRegister={filterRegister}
                handleFilterSubmit={handleFilterSubmit}
-               setAttendanceFilter={setAttendanceFilter}
                filterSetValue={filterSetValue}
+               applyFilters={applyFilters}
             />
          )}
       </div>

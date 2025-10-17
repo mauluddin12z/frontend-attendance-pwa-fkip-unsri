@@ -1,15 +1,15 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import LogoutModal from "@/components/ui/LogoutModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import SidebarLink from "@/components/SidebarLink";
+import LogoutModal from "@/components/ui/Modal/LogoutModal";
 interface AdminSidebarProps {
    onLogout: () => void;
 }
 
 const sidebarLinks = [
-   { href: "/administrator/dashboard", label: "Home", icon: "HomeIcon" },
+   { href: "/administrator/dashboard", label: "Dashboard", icon: "HomeIcon" },
    { href: "/administrator/user", label: "User", icon: "UserIcon" },
    { href: "/administrator/absensi", label: "Absensi", icon: "AttendanceIcon" },
    { href: "/administrator/izin", label: "Izin", icon: "LeaveIcon" },

@@ -20,8 +20,6 @@ export {
 
 export { default as useAttendanceAction } from "./useAttendanceAction";
 
-export { default as useAttendanceModal } from "./useAttendanceModal";
-
 export {
    useAttendanceStatusById,
    useAttendanceStatuses,

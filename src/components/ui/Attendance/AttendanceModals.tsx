@@ -1,9 +1,41 @@
+import { ModalState } from "@/hooks/misc/useAdministratorModal";
 import AddModal from "../Modal/AddModal";
 import DeleteModal from "../Modal/DeleteModal";
 import EditModal from "../Modal/EditModal";
 import Modal from "../Modal/Modal";
 import AttendanceForm from "./AttendanceForm";
 import AttendanceListCard from "./AttendanceListCard";
+import {
+   Control,
+   FieldErrors,
+   UseFormHandleSubmit,
+   UseFormRegister,
+   UseFormSetValue,
+   UseFormWatch,
+} from "react-hook-form";
+import { Attendance, AttendanceStatus, User } from "@/types";
+import { Dispatch, SetStateAction } from "react";
+
+interface AttendanceModalsProps {
+   modalState: ModalState;
+   closeModal: () => void;
+   handleDelete: () => void;
+   handleSubmit: UseFormHandleSubmit<any>;
+   handleEdit: (data: any) => void;
+   handleAdd: (data: any) => void;
+   isCreating: boolean;
+   isUpdating: boolean;
+   isDeleting: boolean;
+   selectedAttendance?: Attendance;
+   users: User[];
+   userLoading: boolean;
+   setSearchUser: Dispatch<SetStateAction<string>>;
+   errors: FieldErrors;
+   register: UseFormRegister<any>;
+   control: Control<any>;
+   watch?: UseFormWatch<any>;
+   selectedUser?: User;
+}
 
 // Modals Component
 const AttendanceModals = ({
@@ -17,16 +49,15 @@ const AttendanceModals = ({
    isUpdating,
    isDeleting,
    selectedAttendance,
-   attendanceStatuses,
-   attendanceStatusLoading,
    users,
    userLoading,
    setSearchUser,
    errors,
    register,
    control,
+   watch,
    selectedUser,
-}: any) => {
+}: AttendanceModalsProps) => {
    return (
       <>
          {/* Modal */}
@@ -39,7 +70,7 @@ const AttendanceModals = ({
                width="max-w-[calc(100%-24px)]"
             >
                <AttendanceListCard
-                  day={selectedAttendance?.date}
+                  day={selectedAttendance?.date!}
                   attendance={selectedAttendance}
                />
             </Modal>
@@ -62,12 +93,10 @@ const AttendanceModals = ({
                isAdding={isCreating}
             >
                <AttendanceForm
-                  formType="add"
                   register={register}
                   control={control}
+                  watch={watch}
                   errors={errors}
-                  attendanceStatuses={attendanceStatuses}
-                  attendanceStatusLoading={attendanceStatusLoading}
                   users={users}
                   userLoading={userLoading}
                   setSearchUser={setSearchUser}
@@ -85,12 +114,10 @@ const AttendanceModals = ({
                isEditing={isUpdating}
             >
                <AttendanceForm
-                  formType="edit"
                   register={register}
                   control={control}
                   errors={errors}
-                  attendanceStatuses={attendanceStatuses}
-                  attendanceStatusLoading={attendanceStatusLoading}
+                  watch={watch}
                   selectedUser={selectedUser}
                />
             </EditModal>

@@ -15,23 +15,23 @@ import { useUserLeaveRequests } from "@/hooks/leave-request";
 export default function LeaveDashboardPage() {
    const { user } = useAuth();
    const router = useRouter();
-   const { all, approved, rejected, canceled, pending } = useUserLeaveRequests(
+   const { all, approved, rejected, cancelled, pending } = useUserLeaveRequests(
       user?.id
    );
-   const [activeFilter, setActiveFilter] = useState<LeaveFilterType>("all");
+   const [activeFilter, setActiveFilter] = useState<LeaveFilterType>("semua");
 
    // Function to get filtered leave requests based on filter type
    const getFilteredRequests = () => {
       switch (activeFilter) {
-         case "all":
+         case "semua":
             return all.userLeaveRequests;
-         case "approved":
+         case "disetujui":
             return approved.userLeaveRequests;
-         case "rejected":
+         case "ditolak":
             return rejected.userLeaveRequests;
-         case "canceled":
-            return canceled.userLeaveRequests;
-         case "pending":
+         case "dibatalkan":
+            return cancelled.userLeaveRequests;
+         case "menunggu persetujuan":
             return pending.userLeaveRequests;
          default:
             return [];
@@ -45,7 +45,7 @@ export default function LeaveDashboardPage() {
          activeFilter,
          approved.userLeaveRequests,
          rejected.userLeaveRequests,
-         canceled.userLeaveRequests,
+         cancelled.userLeaveRequests,
          pending.userLeaveRequests,
       ]
    );
@@ -55,7 +55,7 @@ export default function LeaveDashboardPage() {
          all.mutate(),
          approved.mutate(),
          rejected.mutate(),
-         canceled.mutate(),
+         cancelled.mutate(),
       ]);
    };
 
@@ -92,7 +92,7 @@ export default function LeaveDashboardPage() {
                borderColor="border-red-400"
             />
             <LeaveDashboardCard
-               count={canceled.userLeaveRequests?.pagination?.totalItems || 0}
+               count={cancelled.userLeaveRequests?.pagination?.totalItems || 0}
                label="Dibatalkan"
                bgColor="bg-amber-200"
                borderColor="border-amber-400"

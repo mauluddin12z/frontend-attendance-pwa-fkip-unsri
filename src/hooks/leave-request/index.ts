@@ -10,3 +10,5 @@ export {
    useUpdateLeaveRequest,
    useUserLeaveRequests,
 } from "./useLeaveRequests";
+
+export { default as useLeaveRequestAction } from "./useLeaveRequestAction";

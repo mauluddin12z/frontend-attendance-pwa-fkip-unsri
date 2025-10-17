@@ -1,5 +1,5 @@
 import React from "react";
-import LoadingSpinner from "../Loading/LoadingSpinner";
+import LoadingButton from "../Loading/LoadingButton";
 
 export default function ModalFooter({
    closeModal,
@@ -30,7 +30,7 @@ export default function ModalFooter({
          >
             {isSubmitting ? (
                <div className="flex gap-x-2">
-                  <LoadingSpinner className="fill-white" /> Loading...
+                  <LoadingButton label="Loading..." />
                </div>
             ) : (
                actionLabel

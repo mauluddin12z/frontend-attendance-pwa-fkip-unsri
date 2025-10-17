@@ -164,11 +164,17 @@ export const useApproveLeaveRequest = () => {
    const [isApproving, setIsApproving] = useState(false);
    const [error, setError] = useState<Error | null>(null);
 
-   const approve = async (leaveRequestId: number | string) => {
+   const approve = async (
+      leaveRequestId: number | string,
+      leaveRequestData: FormData
+   ) => {
       setIsApproving(true);
       setError(null);
       try {
-         const response = await approveLeaveRequest(leaveRequestId);
+         const response = await approveLeaveRequest(
+            leaveRequestId,
+            leaveRequestData
+         );
          setIsApproving(false);
          return response;
       } catch (err: any) {
@@ -190,11 +196,17 @@ export const useRejectLeaveRequest = () => {
    const [isRejecting, setIsRejecting] = useState(false);
    const [error, setError] = useState<Error | null>(null);
 
-   const reject = async (leaveRequestId: number | string) => {
+   const reject = async (
+      leaveRequestId: number | string,
+      leaveRequestData: FormData
+   ) => {
       setIsRejecting(true);
       setError(null);
       try {
-         const response = await rejectLeaveRequest(leaveRequestId);
+         const response = await rejectLeaveRequest(
+            leaveRequestId,
+            leaveRequestData
+         );
          setIsRejecting(false);
          return response;
       } catch (err: any) {
@@ -243,26 +255,26 @@ export function useUserLeaveRequests(userId?: number, page = 1, size = 10) {
    const all = useLeaveRequestsByUser(userId, { ...commonParams, status: "" });
    const approved = useLeaveRequestsByUser(userId, {
       ...commonParams,
-      status: "approved",
+      status: "disetujui",
    });
    const rejected = useLeaveRequestsByUser(userId, {
       ...commonParams,
-      status: "rejected",
+      status: "ditolak",
    });
-   const canceled = useLeaveRequestsByUser(userId, {
+   const cancelled = useLeaveRequestsByUser(userId, {
       ...commonParams,
-      status: "canceled",
+      status: "dibatalkan",
    });
    const pending = useLeaveRequestsByUser(userId, {
       ...commonParams,
-      status: "pending",
+      status: "menunggu persetujuan",
    });
 
    return {
       all,
       approved,
       rejected,
-      canceled,
+      cancelled,
       pending,
    };
 }

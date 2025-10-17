@@ -5,3 +5,4 @@ export {
    useHolidays,
    useUpdateHoliday,
 } from "./useHolidays";
+export { default as useHolidayAction } from "./useHolidayAction";

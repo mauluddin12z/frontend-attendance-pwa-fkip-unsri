@@ -13,3 +13,5 @@ export {
    useRoles,
    useUpdateRole,
 } from "./useRoles";
+
+export { default as useUserAction } from "./useUserAction";
