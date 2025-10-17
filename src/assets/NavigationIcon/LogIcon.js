@@ -1,4 +1,4 @@
-export default function logIcon({ color = "black" }) {
+export default function LogIcon({ color = "black" }) {
    return (
       <svg
          viewBox="0 0 512 512"
