@@ -67,7 +67,7 @@ const WorkingHourTable = ({
                      <LoadingSpinner />
                   </td>
                </tr>
-            ) : !workingHours ? (
+            ) : workingHours.length === 0 ? (
                <tr>
                   <td colSpan={7} className="px-6 py-4 text-center">
                      Tidak ada data jam kerja

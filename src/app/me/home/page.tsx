@@ -20,6 +20,7 @@ import { Holiday } from "@/types";
 import TimeIcon from "@/assets/TimeIcon";
 import CheckInIcon from "@/assets/CheckInIcon";
 import CheckOutIcon from "@/assets/CheckOutIcon";
+import Link from "next/link";
 
 const Page = () => {
    // Common Values
@@ -54,8 +55,6 @@ const Page = () => {
    const hasWorkingHours = Boolean(
       todayWorkingHours && todayWorkingHours !== "Libur"
    );
-
-   console.log(workingHours);
 
    // Attendance
    // Factory for attendance filters
@@ -119,13 +118,13 @@ const Page = () => {
                      settingsGeofences={activeSettingsGeofences?.data}
                      isLoading={isLoadingSettingsGeofence}
                   />
-                  <button
+                  <Link
+                     href={"/me/notifikasi"}
                      aria-label="Notifications"
                      className="text-white p-2 w-10 h-10 aspect-square rounded-lg bg-blue-300 hover:bg-blue-500 transition"
-                     onClick={() => alert("Notification clicked!")}
                   >
                      <FontAwesomeIcon icon={faBell} size="lg" />
-                  </button>
+                  </Link>
                </div>
             </section>
 

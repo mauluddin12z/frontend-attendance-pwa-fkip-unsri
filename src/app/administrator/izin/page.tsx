@@ -152,7 +152,7 @@ export default function Page() {
    } = useLeaveRequestAction(leaveRequestMutate, closeModal, setError);
 
    return (
-      <div className="flex flex-col gap-2 p-2 border border-gray-200 rounded-lg">
+      <div className="flex flex-col justify-center gap-2 p-2 border border-gray-200 rounded-lg">
          {/* Toolbar for search and filter */}
          <AdminTableToolbar
             searchQuery={searchQuery}

@@ -8,7 +8,7 @@ export default function ProfileInfo({
    value: string | undefined;
 }>) {
    return (
-      <div className="flex flex-col py-2 border-b border-gray-200">
+      <div className="flex flex-col p-4 bg-white border-b border-gray-200">
          <div className="text-gray-400 font-light">{label}</div>
          <div className="text-black font-light">{value || "---"}</div>
       </div>

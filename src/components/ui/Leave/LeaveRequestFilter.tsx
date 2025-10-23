@@ -40,7 +40,7 @@ export default function LeaveRequestFilter({
             <button
                key={value}
                onClick={() => onChange(value)}
-               className={getButtonClass(value)}
+               className={`${getButtonClass(value)} text-nowrap`}
             >
                {label}
             </button>

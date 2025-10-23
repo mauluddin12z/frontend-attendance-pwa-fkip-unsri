@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 import {
    fetchLeaveRequests,
@@ -66,7 +66,7 @@ export const useLeaveRequestsByUser = (
             : Promise.resolve(null),
       {
          revalidateOnFocus: false,
-         revalidateOnReconnect: false,
+         revalidateOnReconnect: false
       }
    );
 
@@ -250,25 +250,23 @@ export const useCancelLeaveRequest = () => {
 };
 
 export function useUserLeaveRequests(userId?: number, page = 1, size = 10) {
-   const commonParams = { page, size, include: "leaveUser,approver" };
+   const commonParams = useMemo(() => ({
+      page,
+      size,
+      include: "leaveUser,approver",
+   }), [page, size]);
 
-   const all = useLeaveRequestsByUser(userId, { ...commonParams, status: "" });
-   const approved = useLeaveRequestsByUser(userId, {
-      ...commonParams,
-      status: "disetujui",
-   });
-   const rejected = useLeaveRequestsByUser(userId, {
-      ...commonParams,
-      status: "ditolak",
-   });
-   const cancelled = useLeaveRequestsByUser(userId, {
-      ...commonParams,
-      status: "dibatalkan",
-   });
-   const pending = useLeaveRequestsByUser(userId, {
-      ...commonParams,
-      status: "menunggu persetujuan",
-   });
+   const allFilters = useMemo(() => ({ ...commonParams, status: "" }), [commonParams]);
+   const approvedFilters = useMemo(() => ({ ...commonParams, status: "disetujui" }), [commonParams]);
+   const rejectedFilters = useMemo(() => ({ ...commonParams, status: "ditolak" }), [commonParams]);
+   const cancelledFilters = useMemo(() => ({ ...commonParams, status: "dibatalkan" }), [commonParams]);
+   const pendingFilters = useMemo(() => ({ ...commonParams, status: "menunggu persetujuan" }), [commonParams]);
+
+   const all = useLeaveRequestsByUser(userId, allFilters);
+   const approved = useLeaveRequestsByUser(userId, approvedFilters);
+   const rejected = useLeaveRequestsByUser(userId, rejectedFilters);
+   const cancelled = useLeaveRequestsByUser(userId, cancelledFilters);
+   const pending = useLeaveRequestsByUser(userId, pendingFilters);
 
    return {
       all,

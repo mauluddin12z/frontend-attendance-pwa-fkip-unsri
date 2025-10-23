@@ -27,37 +27,39 @@ export default function Pagination({
    };
    if (isLoading) {
       return (
-         <ul className="inline-flex -space-x-px">
-            {/* Prev Page */}
-            <li>
-               <button
-                  className="px-3 py-2 leading-tight bg-white border border-gray-300 rounded-l-lg text-gray-400"
-                  disabled
-               >
-                  <FontAwesomeIcon icon={faArrowLeft} />
-               </button>
-            </li>
+         <div className="flex justify-center items-center gap-x-2">
+            <ul className="inline-flex -space-x-px">
+               {/* Prev Page */}
+               <li>
+                  <button
+                     className="px-3 py-2 leading-tight bg-white border border-gray-300 rounded-l-lg text-gray-400"
+                     disabled
+                  >
+                     <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
+               </li>
 
-            {/* Page Numbers */}
-            <li>
-               <button
-                  className="px-3 py-2 leading-tight text-gray-400 bg-white border border-gray-300"
-                  disabled
-               >
-                  1
-               </button>
-            </li>
+               {/* Page Numbers */}
+               <li>
+                  <button
+                     className="px-3 py-2 leading-tight text-gray-400 bg-white border border-gray-300"
+                     disabled
+                  >
+                     1
+                  </button>
+               </li>
 
-            {/* Next Page */}
-            <li>
-               <button
-                  className="px-3 py-2 leading-tight bg-white border border-gray-300 rounded-r-lg text-gray-400"
-                  disabled
-               >
-                  <FontAwesomeIcon icon={faArrowRight} />
-               </button>
-            </li>
-         </ul>
+               {/* Next Page */}
+               <li>
+                  <button
+                     className="px-3 py-2 leading-tight bg-white border border-gray-300 rounded-r-lg text-gray-400"
+                     disabled
+                  >
+                     <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+               </li>
+            </ul>
+         </div>
       );
    }
 

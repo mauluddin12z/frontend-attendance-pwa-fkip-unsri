@@ -33,7 +33,6 @@ export default function HeaderTitle({
             <NavigationButton
                direction="prev"
                onClick={handleBack}
-               borderColor="border-white/0"
             />
          )}
          <h1 className="text-2xl font-semibold">{title}</h1>

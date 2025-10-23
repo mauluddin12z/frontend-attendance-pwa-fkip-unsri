@@ -32,12 +32,12 @@ export default function Page() {
    }
 
    return (
-      <>
+      <div className="bg-white min-h-[calc(100vh-5rem)] flex flex-col py-2">
          {/* Header */}
          <HeaderTitle title="Profile" className="px-4 pt-6" />
 
          {/* Profile Data */}
-         <section className="mt-4 px-4 bg-white">
+         <section className="mt-4 px-4">
             <div className="flex-col space-y-4">
                <ProfileInfo label="Nama" value={user?.fullName} />
                <ProfileInfo label="NIP" value={user?.nip} />
@@ -96,6 +96,6 @@ export default function Page() {
                onConfirm={confirmLogout}
             />
          )}
-      </>
+      </div>
    );
 }

@@ -69,7 +69,7 @@ const UserTable = ({
                      <LoadingSpinner />
                   </td>
                </tr>
-            ) : !users ? (
+            ) : users.length === 0 ? (
                <tr>
                   <td colSpan={8} className="px-6 py-4 text-center">
                      Tidak ada data pengguna

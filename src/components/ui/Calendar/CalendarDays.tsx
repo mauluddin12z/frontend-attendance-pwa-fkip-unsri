@@ -49,19 +49,16 @@ const CalendarDays = ({
          const container = containerRef.current;
          const activeButton = activeRef.current;
 
-         const offsetLeft = activeButton.offsetLeft;
-         const offsetWidth = activeButton.offsetWidth;
-         const containerWidth = container.clientWidth;
+         const containerRect = container.getBoundingClientRect();
+         const buttonRect = activeButton.getBoundingClientRect();
 
-         // Calculate scroll position to center active button
-         let scrollTo = offsetLeft - containerWidth / 2 + offsetWidth / 2;
+         const buttonCenter = buttonRect.left + buttonRect.width / 2;
+         const containerCenter = containerRect.left + containerRect.width / 2;
 
-         // Clamp scrollTo between 0 and max scroll
-         const maxScrollLeft = container.scrollWidth - containerWidth;
-         scrollTo = Math.max(0, Math.min(scrollTo, maxScrollLeft));
+         const scrollOffset = buttonCenter - containerCenter;
 
          container.scrollTo({
-            left: scrollTo,
+            left: container.scrollLeft + scrollOffset,
             behavior: "smooth",
          });
       }

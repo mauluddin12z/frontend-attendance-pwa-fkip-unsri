@@ -116,7 +116,7 @@ const LeaveRequestTable = ({
                      <LoadingSpinner />
                   </td>
                </tr>
-            ) : !leaveRequests ? (
+            ) : leaveRequests.length === 0 ? (
                <tr>
                   <td colSpan={10} className="px-6 py-4 text-center">
                      Tidak ada data yang ditemukan
@@ -130,8 +130,6 @@ const LeaveRequestTable = ({
                      label: leaveRequest.status,
                      color: "bg-gray-300 border text-gray-800",
                   };
-
-                  console.log(statusKey);
 
                   return (
                      <tr

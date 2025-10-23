@@ -95,7 +95,6 @@ export default function useAttendanceAction(
                   await deleteLeaveRequest(selectedLeaveRequest.id);
                break;
             case "approve":
-               console.log(selectedLeaveRequest?.id);
                if (selectedLeaveRequest?.id)
                   await approveLeaveRequest(selectedLeaveRequest.id, formData);
                break;
