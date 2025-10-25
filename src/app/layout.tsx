@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
-import "./globals.css";
+// app/layout.tsx
 import { AuthProvider } from "@/context/AuthContext";
-import { Toaster } from "react-hot-toast";
 import { DeviceProvider } from "@/context/DeviceContext";
 import { LocationProvider } from "@/context/LocationContext";
-// Load the Poppins font
+import { NotificationProvider } from "@/context/NotificationContext";
+import { Toaster } from "react-hot-toast";
+import { Poppins } from "next/font/google";
+import "./globals.css";
+import NotificationToast from "@/components/ui/Notification/NotificationToast";
+import { Metadata } from "next";
+
 const poppins = Poppins({
    variable: "--font-poppins",
    subsets: ["latin"],
@@ -14,8 +17,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-   title: "Sistem Absensi FKIP Unsri",
-   description: "Sistem Absensi FKIP Unsri",
+   title: "Absensi FKIP UNSRI",
+   description: "Absensi FKIP UNSRI",
+   generator: "Next.js",
    manifest: "/manifest.json",
    icons: [
       { rel: "apple-touch-icon", url: "/icons/icon-128x128.png" },
@@ -31,21 +35,25 @@ export const viewport = {
       { media: "(prefers-color-scheme: light)", color: "#000" },
    ],
 };
+
 export default function RootLayout({
    children,
-}: Readonly<{
+}: {
    children: React.ReactNode;
-}>) {
+}) {
    return (
       <html lang="en">
          <body className={`${poppins.variable} antialiased`}>
             <AuthProvider>
-               <DeviceProvider>
-                  <LocationProvider>
-                     <Toaster position="top-center" reverseOrder={false} />
-                     {children}
-                  </LocationProvider>
-               </DeviceProvider>
+               <NotificationProvider>
+                  <DeviceProvider>
+                     <LocationProvider>
+                        <NotificationToast />
+                        <Toaster position="top-center" reverseOrder={false} />
+                        {children}
+                     </LocationProvider>
+                  </DeviceProvider>
+               </NotificationProvider>
             </AuthProvider>
          </body>
       </html>

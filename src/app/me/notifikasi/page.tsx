@@ -1,164 +1,92 @@
 "use client";
 
+import { useState, useEffect, useRef, useCallback } from "react";
 import HeaderTitle from "@/components/ui/HeaderTitle";
-import NotificationCard from "@/components/ui/NotificationCard";
+import NotificationCard from "@/components/ui/Notification/NotificationCard";
+import DeleteModal from "@/components/ui/Modal/DeleteModal";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { useWorkingHours } from "@/hooks/working-hour";
-import { useAttendanceByUser } from "@/hooks/attendance";
-import customMoment from "@/utils/customMoment";
 import { useAuth } from "@/context/AuthContext";
 import {
-   requestNotificationPermission,
-   showNotification,
-} from "@/utils/notification";
-import DeleteModal from "@/components/ui/Modal/DeleteModal";
-
-// Types
-type AppNotification = {
-   id: string;
-   type: "checkin" | "checkout";
-   time: string; // HH:mm
-   message: string;
-   createdAt: string; // ISO string
-};
-
-const STORAGE_KEY = "app_notifications";
+   useNotificationByUser,
+   useDeleteAllNotifications,
+} from "@/hooks/notification";
+import { Notification } from "@/types";
+import BounceLoading from "@/components/ui/Loading/BounceLoading";
 
 export default function Page() {
-   const today = useMemo(() => customMoment().format("YYYY-MM-DD"), []);
-   const todayDayOfWeek = useMemo(() => customMoment().day(), []);
-
-   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-
-   // Working hours
-   const { workingHours } = useWorkingHours({ dayOfWeek: todayDayOfWeek });
-   const todayWorkingHours = workingHours?.data?.[0];
-
-   // User
-   const { user } = useAuth();
+   const { user, isLoading: userLoading } = useAuth();
    const userId = user?.id;
 
-   // Attendance filters
-   const attendanceFilter = useCallback(
-      (type?: string) => ({
-         attendanceType: type,
-         startDate: today,
-         endDate: today,
-         include: "details",
-      }),
-      [today]
-   );
+   // Pagination state
+   const [page, setPage] = useState(1);
+   const [notifications, setNotifications] = useState<Notification[]>([]);
+   const [hasMore, setHasMore] = useState(false);
 
-   const { userAttendances: checkInData } = useAttendanceByUser(
+   const { userNotifications, isLoading, mutate } = useNotificationByUser(
       userId,
-      attendanceFilter("checkIn")
-   );
-   const { userAttendances: checkOutData } = useAttendanceByUser(
-      userId,
-      attendanceFilter("checkOut")
+      {
+         page,
+         size: 10,
+         sortBy: "createdAt",
+         order: "DESC",
+      }
    );
 
-   const hasCheckedIn = !!checkInData?.data?.[0]?.attendanceDetails?.length;
-   const hasCheckedOut = !!checkOutData?.data?.[0]?.attendanceDetails?.length;
+   const { deleteAllNotifications, isDeletingAll } =
+      useDeleteAllNotifications();
+   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-   // Load stored notifications
+   // Merge notifications as new pages load
    useEffect(() => {
-      try {
-         const stored = localStorage.getItem(STORAGE_KEY);
-         if (stored) {
-            const parsed = JSON.parse(stored) as AppNotification[];
-            setNotifications(parsed);
+      if (!userNotifications?.data) return;
+
+      setNotifications((prev) => {
+         if (page === 1) return userNotifications.data;
+
+         const newItems = userNotifications.data.filter(
+            (n: Notification) => !prev.some((p) => p.id === n.id)
+         );
+
+         return [...prev, ...newItems];
+      });
+
+      setHasMore(userNotifications.pagination?.hasNextPage ?? false);
+   }, [userNotifications]);
+
+   // Infinite scroll trigger
+   const observerRef = useRef<HTMLDivElement | null>(null);
+
+   const handleObserver = useCallback(
+      (entries: IntersectionObserverEntry[]) => {
+         const [target] = entries;
+         if (target.isIntersecting && hasMore && !isLoading) {
+            setPage((prev) => prev + 1);
          }
-      } catch (e) {
-         console.error("Failed to load notifications from localStorage", e);
-         localStorage.removeItem(STORAGE_KEY);
-      }
-   }, []);
+      },
+      [hasMore, isLoading]
+   );
 
-   // Request notification permission on component mount
    useEffect(() => {
-      requestNotificationPermission();
-   }, []);
+      const observer = new IntersectionObserver(handleObserver, {
+         root: null,
+         rootMargin: "200px",
+         threshold: 0,
+      });
+      if (observerRef.current) observer.observe(observerRef.current);
+      return () => observer.disconnect();
+   }, [handleObserver]);
 
-   // Schedule notifications
-   useEffect(() => {
-      if (!todayWorkingHours) return;
-
-      const scheduleNotification = (
-         type: "checkin" | "checkout",
-         time: string,
-         message: string
-      ): (() => void) | undefined => {
-         const [hour, minute] = time.split(":").map(Number);
-         const now = new Date();
-         const targetTime = new Date();
-         targetTime.setHours(18, 27, 0, 0);
-
-         const delay = targetTime.getTime() - now.getTime();
-         if (delay <= 0) return; // already passed
-
-         const timerId = setTimeout(() => {
-            const newNotif: AppNotification = {
-               id: `${type}-${Date.now()}`,
-               type,
-               time,
-               message,
-               createdAt: new Date().toISOString(),
-            };
-
-            const existing = JSON.parse(
-               localStorage.getItem(STORAGE_KEY) || "[]"
-            ) as AppNotification[];
-
-            const updated = [...existing, newNotif];
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-            setNotifications(updated);
-
-            // Show the browser notification
-            showNotification("Reminder", { body: message });
-         }, delay);
-
-         return () => clearTimeout(timerId); // Clean up
-      };
-
-      const timers: (() => void)[] = [];
-
-      // Schedule check-in notification
-      if (!hasCheckedIn && todayWorkingHours.startTime) {
-         const checkinTimer = scheduleNotification(
-            "checkin",
-            todayWorkingHours.startTime,
-            `Sudah waktunya check-in (${todayWorkingHours.startTime})`
-         );
-         if (checkinTimer) timers.push(checkinTimer);
-      }
-      // Schedule check-out notification
-      if (!hasCheckedOut && todayWorkingHours.endTime) {
-         const checkoutTimer = scheduleNotification(
-            "checkout",
-            todayWorkingHours.endTime,
-            `Sudah waktunya check-out (${todayWorkingHours.endTime})`
-         );
-         if (checkoutTimer) timers.push(checkoutTimer);
-      }
-
-      // Cleanup timers when the component unmounts or when dependencies change
-      return () => {
-         timers.forEach((clear) => {
-            if (clear) clear();
-         });
-      };
-   }, [todayWorkingHours, hasCheckedIn, hasCheckedOut]);
-
-   // Clear all notifications
-   const [IsDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-   const clearAllNotifications = () => {
-      setIsDeleteModalOpen((prev) => !prev);
-      localStorage.removeItem(STORAGE_KEY);
+   const handleConfirmDelete = async () => {
+      await deleteAllNotifications();
+      setPage(1);
       setNotifications([]);
+      setHasMore(true);
+      mutate();
+      setIsDeleteModalOpen(false);
    };
+
+   const isDataLoading = userLoading || isLoading;
 
    return (
       <div className="bg-white min-h-[calc(100vh-5rem)] flex flex-col py-2">
@@ -169,38 +97,65 @@ export default function Page() {
                navigateTo="/me/home"
             />
             <button
-               onClick={() => setIsDeleteModalOpen((prev) => !prev)}
-               className="flex justify-center items-center text-sm text-red-500 underline p-2 rounded border border-red-600 hover:bg-red-200 focus:bg-red-200 cursor-pointer"
+               onClick={() => setIsDeleteModalOpen(true)}
+               disabled={isDeletingAll || isDataLoading}
+               className={`flex justify-center items-center text-sm p-2 rounded border
+                  ${
+                     isDeletingAll || isDataLoading
+                        ? "text-gray-400 border-gray-300 cursor-not-allowed"
+                        : "text-red-500 border-red-600 underline hover:bg-red-200 focus:bg-red-200"
+                  }`}
             >
                <FontAwesomeIcon icon={faTrash} />
             </button>
          </div>
 
-         <section className="pt-4 space-y-4 px-4">
-            {notifications.length > 0 ? (
-               notifications
-                  .sort(
-                     (a, b) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
-                  )
-                  .map((notif) => (
+         <section className="pt-4 space-y-4 px-4 flex-1 overflow-auto">
+            {page === 1 && isDataLoading ? (
+               <div className="space-y-3 animate-pulse">
+                  {[...Array(5)].map((_, i) => (
+                     <div
+                        key={i}
+                        className="bg-gray-200 rounded-md h-10 w-full"
+                     />
+                  ))}
+               </div>
+            ) : notifications.length > 0 ? (
+               <>
+                  {notifications.map((notif: Notification) => (
                      <NotificationCard
                         key={notif.id}
+                        notificationId={notif.id}
                         type={notif.type}
-                        time={notif.time}
+                        time={notif.createdAt}
                         message={notif.message}
+                        isRead={notif.read}
+                        mutate={mutate}
                      />
-                  ))
+                  ))}
+
+                  {/* Infinite scroll sentinel */}
+                  {hasMore && (
+                     <div
+                        ref={observerRef}
+                        className="text-center py-2 text-gray-400"
+                     >
+                        <BounceLoading />
+                     </div>
+                  )}
+               </>
             ) : (
-               <p className="text-gray-500">Belum ada notifikasi.</p>
+               <p className="text-gray-500 text-center mt-4">
+                  Belum ada notifikasi.
+               </p>
             )}
          </section>
+
          <DeleteModal
-            isOpen={IsDeleteModalOpen}
+            isOpen={isDeleteModalOpen}
             closeModal={() => setIsDeleteModalOpen(false)}
-            isDeleting={false}
-            onConfirm={clearAllNotifications}
+            isDeleting={isDeletingAll}
+            onConfirm={handleConfirmDelete}
          />
       </div>
    );

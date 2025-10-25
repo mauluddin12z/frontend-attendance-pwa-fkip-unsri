@@ -163,6 +163,7 @@ export default function Page() {
                type="text"
                error={errors.phoneNumber?.message || customErrors.phoneNumber}
                register={register("phoneNumber")}
+               placeholder="Masukkan nomor telepon"
             />
 
             {!showPasswordFields ? (

@@ -1,7 +1,7 @@
 {
-   "name": "Sistem Absensi FKIP Unsri",
-   "short_name": "Sistem Absensi FKIP Unsri",
-   "theme_color": "#0000",
+   "name": "Absensi FKIP Unsri",
+   "short_name": "Absensi FKIP Unsri",
+   "theme_color": "#000000",
    "background_color": "#ffffff",
    "display": "standalone",
    "orientation": "any",

@@ -99,7 +99,7 @@ export default function LeaveDashboardPage() {
             />
          </section>
 
-         <section className="px-4 mt-6">
+         <section className="px-4 my-6">
             <div className="font-semibold mb-2">Riwayat Pengajuan Izin</div>
             <LeaveRequestFilter
                activeFilter={activeFilter}

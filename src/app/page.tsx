@@ -1,13 +1,24 @@
-import { haversine } from "@/utils/heversine";
-import React from "react";
+"use client";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import toast, { Toaster } from "react-hot-toast";
 
-export default function page() {
-   // Example usage:
-   const distance = haversine(
-      -2.9581962225474805,
-      104.75689349,
-      -2.957524370397373,
-      104.75409285702968
+export default function Page() {
+   const notify = () =>
+      toast(
+         <div className="flex items-center">
+            <div className="p-1 aspect-square rounded-full mr-4 bg-yellow-400">
+               <FontAwesomeIcon className="text-white" icon={faBell} />
+            </div>
+            Hello World!
+         </div>
+      );
+
+   return (
+      <div>
+         <button onClick={notify}>Show Toast</button>
+         {/* This renders the toast notifications */}
+         <Toaster />
+      </div>
    );
-   return <div>{`Distance: ${distance.toFixed(2)} km`}</div>;
 }

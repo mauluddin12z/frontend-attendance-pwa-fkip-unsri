@@ -144,6 +144,14 @@ export interface AuditLog {
    createdAt: string;
    user: User;
 }
+export interface Notification {
+   id: number;
+   userId: number;
+   message: string;
+   type: string;
+   read: boolean;
+   createdAt: string;
+}
 
 // Types
 export interface UserForm {

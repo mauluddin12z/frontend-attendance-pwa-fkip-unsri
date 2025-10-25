@@ -51,7 +51,7 @@ export default function Page() {
          </section>
 
          {/* Actions */}
-         <section className="mt-6 px-4">
+         <section className="my-6 px-4">
             <div className="flex flex-col space-y-6">
                {user?.role === "admin" && (
                   <Link

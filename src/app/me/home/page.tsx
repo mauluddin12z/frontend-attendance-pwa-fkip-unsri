@@ -21,6 +21,7 @@ import TimeIcon from "@/assets/TimeIcon";
 import CheckInIcon from "@/assets/CheckInIcon";
 import CheckOutIcon from "@/assets/CheckOutIcon";
 import Link from "next/link";
+import { useNotificationByUser } from "@/hooks/notification";
 
 const Page = () => {
    // Common Values
@@ -106,6 +107,9 @@ const Page = () => {
       isLoading: isLoadingSettingsGeofence,
    } = useSettingsGeofences(geofenceFilter);
 
+   //Notifications
+   const { userNotifications } = useNotificationByUser(userId, { read: 0 });
+
    return (
       <>
          {/* Top Section */}
@@ -119,10 +123,16 @@ const Page = () => {
                      isLoading={isLoadingSettingsGeofence}
                   />
                   <Link
-                     href={"/me/notifikasi"}
+                     href="/me/notifikasi"
                      aria-label="Notifications"
-                     className="text-white p-2 w-10 h-10 aspect-square rounded-lg bg-blue-300 hover:bg-blue-500 transition"
+                     className="relative flex items-center justify-center w-10 h-10 p-2 text-white bg-blue-300 rounded-lg transition hover:bg-blue-500"
                   >
+                     {/* Notification indicator */}
+                     {userNotifications?.data?.length > 0 && (
+                        <span className="absolute top-0 right-0 mr-0.5 mt-0.5 w-3 h-3 bg-green-400 border border-white rounded-full transform translate-x-1/2 -translate-y-1/2" />
+                     )}
+
+                     {/* Bell icon */}
                      <FontAwesomeIcon icon={faBell} size="lg" />
                   </Link>
                </div>
