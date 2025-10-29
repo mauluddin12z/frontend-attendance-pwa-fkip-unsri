@@ -25,7 +25,9 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
          type="button"
          onClick={onClick}
          aria-label={label}
-         className={`p-2 ${bgColor} border ${borderColor} rounded-lg text-gray-600 hover:bg-gray-100 focus:bg-gray-100 transition ${className} cursor-pointer`}
+         className={`p-2 ${bgColor} ${
+            borderColor && "border " + borderColor
+         } rounded-lg text-gray-600 hover:bg-gray-100 focus:bg-gray-100 transition ${className} cursor-pointer`}
       >
          <FontAwesomeIcon icon={icon} size="lg" />
       </button>

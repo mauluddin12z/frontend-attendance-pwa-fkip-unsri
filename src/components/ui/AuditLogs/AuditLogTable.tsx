@@ -6,6 +6,7 @@ import Link from "next/link";
 interface AuditLogTableProps {
    auditLogs: AuditLog[];
    auditLogLoading: boolean;
+   openModal: (auditLog: AuditLog, action: "detail" | "edit" | "delete") => void;
    columnVisibility?: {
       id?: boolean;
       user?: boolean;
@@ -18,6 +19,7 @@ interface AuditLogTableProps {
 const AuditLogTable = ({
    auditLogs,
    auditLogLoading,
+   openModal,
    columnVisibility = {},
 }: AuditLogTableProps) => {
    const defaultVisibility = {
@@ -73,9 +75,7 @@ const AuditLogTable = ({
                      )}
                      {finalColumnVisibility.user && (
                         <td className="px-6 py-4">
-                           <Link
-                              href={`/administrator/logs/${log.user?.nip}`}
-                           >
+                           <Link href={`/administrator/logs/${log.user?.nip}`}>
                               <span className="hover:underline font-semibold">
                                  {log.user?.fullName || "---"}
                               </span>
@@ -87,11 +87,12 @@ const AuditLogTable = ({
                      )}
                      {finalColumnVisibility.details && (
                         <td className="px-6 py-4">
-                           <pre className="whitespace-pre-wrap break-words text-xs text-gray-700">
-                              {log.details
-                                 ? JSON.stringify(log.details, null, 2)
-                                 : "-"}
-                           </pre>
+                           <button
+                              onClick={() => openModal(log, "detail")}
+                              className="hover:underline cursor-pointer"
+                           >
+                              view details
+                           </button>
                         </td>
                      )}
                      {finalColumnVisibility.createdAt && (

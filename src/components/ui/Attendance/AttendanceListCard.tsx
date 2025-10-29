@@ -10,6 +10,7 @@ import {
 type AttendanceListCardProps = {
    day: string;
    attendance?: Attendance;
+   isLoading?: boolean;
 };
 
 const getStatusStyle = (status?: string): string => {
@@ -24,9 +25,10 @@ const getStatusStyle = (status?: string): string => {
 const AttendanceListCard: React.FC<AttendanceListCardProps> = ({
    day,
    attendance,
+   isLoading,
 }) => {
    const { attendanceDetails = [], attendanceStatus } = attendance || {};
-   const statusName = attendanceStatus?.name || "---";
+   const statusName = isLoading ? "" : attendanceStatus?.name || "---";
 
    const checkIn = attendanceDetails.find(
       (detail) => detail.type === "checkIn"

@@ -15,7 +15,7 @@ export default function AdministratorLayout({
    return (
       <div className="flex min-h-screen">
          <AdminSidebar onLogout={handleLogout} />
-         <div className="pl-14 flex flex-col flex-1 w-full">
+         <div className="pl-20 flex flex-col flex-1 w-full">
             <main className="p-4">{children}</main>
          </div>
       </div>

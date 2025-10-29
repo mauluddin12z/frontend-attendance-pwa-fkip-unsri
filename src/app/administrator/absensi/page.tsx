@@ -15,10 +15,9 @@ import { debounceFilterUpdate } from "@/utils/debounce";
 import {
    useAttendanceAction,
    useAttendances,
-   useAttendanceStatuses,
 } from "@/hooks/attendance";
 
-import { useUserById, useUsers } from "@/hooks/user";
+import { useUsers } from "@/hooks/user";
 import { useAdministratorModal } from "@/hooks/misc";
 
 export default function Page() {

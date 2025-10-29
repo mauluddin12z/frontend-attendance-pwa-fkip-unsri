@@ -2,26 +2,23 @@ import { LeaveRequest } from "@/types";
 import LoadingSpinner from "../Loading/LoadingSpinner";
 import Link from "next/link";
 import customMoment from "@/utils/customMoment";
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
 const statusMap: Record<string, { label: string; color: string }> = {
    "menunggu persetujuan": {
       label: "Menunggu persetujuan",
-      color: "bg-blue-300 border border-blue-400 text-blue-800",
+      color: "bg-gray-50 border border-gray-200 text-gray-700",
    },
    disetujui: {
       label: "Disetujui",
-      color: "bg-green-300 border border-green-400 text-green-800",
+      color: "bg-green-50 border border-green-200 text-green-700",
    },
    ditolak: {
       label: "Ditolak",
-      color: "bg-red-300 border border-red-400 text-red-800",
+      color: "bg-red-50 border border-red-200 text-red-700",
    },
    dibatalkan: {
       label: "Dibatalkan",
-      color: "bg-amber-300 border border-amber-400 text-amber-800",
+      color: "bg-amber-50 border border-amber-200 text-amber-700",
    },
 };
 
@@ -67,13 +64,6 @@ const LeaveRequestTable = ({
 
    const finalColumnVisibility = { ...defaultVisibility, ...columnVisibility };
 
-   const [activeDropdownId, setActiveDropdownId] = useState<number | null>(
-      null
-   );
-
-   const toggleDropdown = (rowId: number) => {
-      setActiveDropdownId((prev) => (prev === rowId ? null : rowId));
-   };
 
    return (
       <table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -183,63 +173,32 @@ const LeaveRequestTable = ({
 
                         {finalColumnVisibility.status && (
                            <td className="px-6 py-4 relative">
-                              {leaveRequest.status ===
-                              "menunggu persetujuan" ? (
-                                 <div className="inline-block text-left">
-                                    <button
-                                       onClick={() =>
-                                          toggleDropdown(leaveRequest.id)
-                                       }
-                                       className={`px-3 py-1 rounded-full text-xs font-semibold text-nowrap focus:outline-none ${statusInfo.color} cursor-pointer`}
-                                    >
-                                       <span className="flex gap-x-1 items-center">
-                                          {leaveRequest.status}
-                                          <FontAwesomeIcon
-                                             icon={
-                                                activeDropdownId
-                                                   ? faAngleDown
-                                                   : faAngleRight
-                                             }
-                                          />
-                                       </span>
-                                    </button>
-
-                                    {activeDropdownId === leaveRequest.id && (
-                                       <div className="absolute z-10 mt-2 w-40 bg-white border border-gray-300 rounded shadow text-sm text-gray-700">
-                                          <button
-                                             onClick={() => {
-                                                openModal(
-                                                   leaveRequest,
-                                                   "approve"
-                                                );
-                                                setActiveDropdownId(null);
-                                             }}
-                                             className="block w-full px-4 py-2 text-left hover:bg-green-100 text-green-700 cursor-pointer"
-                                          >
-                                             Setujui
-                                          </button>
-                                          <button
-                                             onClick={() => {
-                                                openModal(
-                                                   leaveRequest,
-                                                   "reject"
-                                                );
-                                                setActiveDropdownId(null);
-                                             }}
-                                             className="block w-full px-4 py-2 text-left hover:bg-red-100 text-red-700 cursor-pointer"
-                                          >
-                                             Tolak
-                                          </button>
-                                       </div>
-                                    )}
-                                 </div>
-                              ) : (
-                                 <span
-                                    className={`px-3 py-1 rounded-full text-xs font-semibold text-nowrap ${statusInfo.color}`}
-                                 >
-                                    {statusInfo.label}
+                              <div className="flex flex-col w-fit items-center">
+                                 <span className={`px-3 w-fit py-1 rounded-full text-xs font-medium text-nowrap focus:outline-none ${statusInfo.color}`}>
+                                    {leaveRequest.status || "---"}
                                  </span>
-                              )}
+                                 {leaveRequest.status ===
+                                    "menunggu persetujuan" && (
+                                    <div className="flex gap-x-2 mt-2">
+                                       <div
+                                          onClick={() =>
+                                             openModal(leaveRequest, "approve")
+                                          }
+                                          className="text-green-400 text-xs hover:underline cursor-pointer border border-green-400 px-2.5 py-0.5"
+                                       >
+                                          setujui
+                                       </div>
+                                       <div
+                                          onClick={() =>
+                                             openModal(leaveRequest, "reject")
+                                          }
+                                          className="text-red-400 text-xs hover:underline cursor-pointer border border-red-400 px-2.5 py-0.5"
+                                       >
+                                          tolak
+                                       </div>
+                                    </div>
+                                 )}
+                              </div>
                            </td>
                         )}
 

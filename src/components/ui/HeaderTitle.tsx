@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 type HeaderTitleProps = {
    title: string;
    showBackButton?: boolean;
+   backButtonBgColor?: string;
+   backButtonBorderColor?: string;
    navigateTo?: string;
    className?: string;
 };
@@ -14,6 +16,8 @@ type HeaderTitleProps = {
 export default function HeaderTitle({
    title,
    showBackButton = false,
+   backButtonBgColor,
+   backButtonBorderColor,
    navigateTo = "/",
    className = "",
 }: Readonly<HeaderTitleProps>) {
@@ -33,6 +37,8 @@ export default function HeaderTitle({
             <NavigationButton
                direction="prev"
                onClick={handleBack}
+               bgColor={backButtonBgColor}
+               borderColor={backButtonBorderColor}
             />
          )}
          <h1 className="text-2xl font-semibold">{title}</h1>

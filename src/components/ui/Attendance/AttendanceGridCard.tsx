@@ -54,7 +54,9 @@ const AttendanceGridCard: React.FC<AttendanceGridCardProps> = ({
                isFooter={false}
                width="w-[calc(100%-24px)]"
             >
-               <AttendanceListCard day={day} attendance={attendance} />
+               <div className="px-4 pb-4">
+                  <AttendanceListCard day={day} attendance={attendance} />
+               </div>
             </Modal>
          )}
 

@@ -2,11 +2,12 @@ import { Attendance } from "@/types";
 import LoadingSpinner from "../Loading/LoadingSpinner";
 import { attendanceStatusStyle } from "@/utils/attendanceStatusStyle";
 import Link from "next/link";
+import customMoment from "@/utils/customMoment";
 
 interface AttendanceTableProps {
    attendances: Attendance[];
    attendanceLoading: boolean;
-   openModal: (
+   openModal?: (
       attendance: Attendance,
       action: "detail" | "edit" | "delete"
    ) => void;
@@ -128,7 +129,11 @@ const AttendanceTable = ({
                      )}
                      {finalColumnVisibility.date && (
                         <td className="px-6 py-4">
-                           {attendance.date || "---"}
+                           {attendance.date
+                              ? customMoment(attendance.date).format(
+                                   "DD-MM-YYYY"
+                                )
+                              : "---"}
                         </td>
                      )}
                      {finalColumnVisibility.status && (
@@ -154,7 +159,7 @@ const AttendanceTable = ({
                      {finalColumnVisibility.details && (
                         <td className="px-6 py-4">
                            <button
-                              onClick={() => openModal(attendance, "detail")}
+                              onClick={() => openModal?.(attendance, "detail")}
                               className="hover:underline cursor-pointer"
                            >
                               view details
@@ -165,13 +170,15 @@ const AttendanceTable = ({
                         <td className="px-6 py-4 text-center">
                            <div className="flex justify-center items-center gap-2">
                               <button
-                                 onClick={() => openModal(attendance, "edit")}
+                                 onClick={() => openModal?.(attendance, "edit")}
                                  className="font-medium text-blue-600 hover:underline cursor-pointer"
                               >
                                  Edit
                               </button>
                               <button
-                                 onClick={() => openModal(attendance, "delete")}
+                                 onClick={() =>
+                                    openModal?.(attendance, "delete")
+                                 }
                                  className="font-medium text-red-600 hover:underline cursor-pointer"
                               >
                                  Delete

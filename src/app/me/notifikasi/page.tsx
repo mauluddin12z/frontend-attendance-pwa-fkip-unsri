@@ -4,8 +4,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import HeaderTitle from "@/components/ui/HeaderTitle";
 import NotificationCard from "@/components/ui/Notification/NotificationCard";
 import DeleteModal from "@/components/ui/Modal/DeleteModal";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "@/context/AuthContext";
 import {
    useNotificationByUser,
@@ -13,6 +11,8 @@ import {
 } from "@/hooks/notification";
 import { Notification } from "@/types";
 import BounceLoading from "@/components/ui/Loading/BounceLoading";
+import IconDeleteButton from "@/components/ui/IconDeleteButton";
+import LoadingSpinner from "@/components/ui/Loading/LoadingSpinner";
 
 export default function Page() {
    const { user, isLoading: userLoading } = useAuth();
@@ -94,32 +94,18 @@ export default function Page() {
             <HeaderTitle
                title="Notifikasi"
                showBackButton={true}
+               backButtonBorderColor="border-white/0"
                navigateTo="/me/home"
             />
-            <button
-               onClick={() => setIsDeleteModalOpen(true)}
-               disabled={isDeletingAll || isDataLoading}
-               className={`flex justify-center items-center text-sm p-2 rounded border
-                  ${
-                     isDeletingAll || isDataLoading
-                        ? "text-gray-400 border-gray-300 cursor-not-allowed"
-                        : "text-red-500 border-red-600 underline hover:bg-red-200 focus:bg-red-200"
-                  }`}
-            >
-               <FontAwesomeIcon icon={faTrash} />
-            </button>
+            <IconDeleteButton
+               action={() => setIsDeleteModalOpen(true)}
+               isAction={isDeletingAll || isDataLoading}
+            />
          </div>
 
          <section className="pt-4 space-y-4 px-4 flex-1 overflow-auto">
             {page === 1 && isDataLoading ? (
-               <div className="space-y-3 animate-pulse">
-                  {[...Array(5)].map((_, i) => (
-                     <div
-                        key={i}
-                        className="bg-gray-200 rounded-md h-10 w-full"
-                     />
-                  ))}
-               </div>
+               <LoadingSpinner />
             ) : notifications.length > 0 ? (
                <>
                   {notifications.map((notif: Notification) => (

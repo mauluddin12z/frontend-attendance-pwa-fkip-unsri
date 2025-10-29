@@ -29,7 +29,7 @@ export default function AttendanceFilterForm({
    return (
       <form
          onSubmit={handleFilterSubmit}
-         className="space-y-4 px-6 py-4 w-full border rounded-md bg-white shadow-sm"
+         className="space-y-4 px-6 py-4 w-full rounded-md bg-white shadow-sm"
       >
          {/* Attendance Status */}
          <div>

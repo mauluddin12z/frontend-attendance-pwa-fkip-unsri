@@ -2,7 +2,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import SidebarLink from "@/components/SidebarLink";
+import SidebarLink from "@/components/ui/SidebarLink";
 import LogoutModal from "@/components/ui/Modal/LogoutModal";
 interface AdminSidebarProps {
    onLogout: () => void;
@@ -37,7 +37,7 @@ export default function AdminSidebar({
    };
 
    return (
-      <aside className="fixed left-0 z-48 w-14 h-full bg-white border border-gray-200 sm:px-3 sm:py-4 px-1 py-2">
+      <aside className="fixed left-0 z-48 w-20 h-full bg-white border border-gray-200 sm:px-3 sm:py-4 px-1 py-2">
          <ul className="space-y-4 font-medium text-sm">
             {sidebarLinks.map(({ href, label, icon }) => {
                const isActive = pathname === href;
@@ -54,7 +54,7 @@ export default function AdminSidebar({
             <li className="relative group">
                <button
                   onClick={openLogoutModal}
-                  className="flex flex-col justify-center items-center w-full gap-y-2 p-2 text-gray-900 rounded-lg hover:bg-gray-100 cursor-pointer"
+                  className="flex flex-col justify-center items-center w-full gap-y-2 p-2 text-gray-900 rounded-lg hover:bg-gray-100 cursor-pointer aspect-square"
                   aria-label="Logout"
                >
                   <FontAwesomeIcon icon={faSignOut} />

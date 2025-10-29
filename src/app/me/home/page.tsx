@@ -129,7 +129,9 @@ const Page = () => {
                   >
                      {/* Notification indicator */}
                      {userNotifications?.data?.length > 0 && (
-                        <span className="absolute top-0 right-0 mr-0.5 mt-0.5 w-3 h-3 bg-green-400 border border-white rounded-full transform translate-x-1/2 -translate-y-1/2" />
+                        <span className="flex justify-center items-center w-5 h-5 aspect-square text-xs font-semibold absolute top-0 right-0 mr-0.5 mt-0.5 bg-green-400 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                           {userNotifications?.data?.length}
+                        </span>
                      )}
 
                      {/* Bell icon */}

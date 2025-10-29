@@ -76,26 +76,18 @@ export default function LeaveDashboardPage() {
             <LeaveDashboardCard
                count={all.userLeaveRequests?.pagination?.totalItems || 0}
                label="Total Izin"
-               bgColor="bg-blue-200"
-               borderColor="border-blue-400"
             />
             <LeaveDashboardCard
                count={approved.userLeaveRequests?.pagination?.totalItems || 0}
                label="Disetujui"
-               bgColor="bg-green-200"
-               borderColor="border-green-400"
             />
             <LeaveDashboardCard
                count={rejected.userLeaveRequests?.pagination?.totalItems || 0}
                label="Ditolak"
-               bgColor="bg-red-200"
-               borderColor="border-red-400"
             />
             <LeaveDashboardCard
                count={cancelled.userLeaveRequests?.pagination?.totalItems || 0}
                label="Dibatalkan"
-               bgColor="bg-amber-200"
-               borderColor="border-amber-400"
             />
          </section>
 

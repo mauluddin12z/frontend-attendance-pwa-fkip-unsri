@@ -20,7 +20,6 @@ export const metadata: Metadata = {
    title: "Absensi FKIP UNSRI",
    description: "Absensi FKIP UNSRI",
    generator: "Next.js",
-   manifest: "/manifest.json",
    icons: [
       { rel: "apple-touch-icon", url: "/icons/icon-128x128.png" },
       { rel: "icon", url: "/icons/icon-128x128.png" },
@@ -43,6 +42,9 @@ export default function RootLayout({
 }) {
    return (
       <html lang="en">
+         <head>
+            <link rel="manifest" href="/manifest.json" />
+         </head>
          <body className={`${poppins.variable} antialiased`}>
             <AuthProvider>
                <NotificationProvider>
