@@ -76,7 +76,7 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
       <div className="flex space-x-4 w-[80%]">
          <button
             onClick={handleClick}
-            className="p-2 w-10 h-10 bg-blue-300 text-white rounded-lg flex items-center justify-center"
+            className="p-2 w-10 h-10 bg-blue-300 rounded-lg transition hover:bg-blue-500 text-white flex items-center justify-center"
             title="Dapatkan lokasi saat ini"
          >
             <FontAwesomeIcon icon={faLocationDot} size="lg" />

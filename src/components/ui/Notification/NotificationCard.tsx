@@ -3,31 +3,18 @@ import customMoment from "@/utils/customMoment";
 import React from "react";
 
 export default function NotificationCard({
-   notificationId,
    type,
    time,
    message,
    isRead,
-   mutate,
+   onMarkAsRead,
 }: {
-   notificationId: number;
    type: string;
    time: string;
    message: string;
    isRead: boolean;
-   mutate: () => void;
+   onMarkAsRead: () => void;
 }) {
-   const { markNotificationAsRead } = useMarkNotificationAsRead();
-
-   const handleMarkAsRead = async () => {
-      try {
-         await markNotificationAsRead(notificationId);
-         mutate();
-      } catch (error) {
-         console.error("Failed to mark notification as read:", error);
-      }
-   };
-
    return (
       <div
          className={`p-4 bg-white border-b border-gray-200 ${
@@ -43,7 +30,7 @@ export default function NotificationCard({
                <p className="text-sm text-gray-600">{message}</p>
                <div className="flex justify-end">
                   <button
-                     onClick={handleMarkAsRead}
+                     onClick={onMarkAsRead}
                      className={`text-xs p-1.5 border border-blue-400 text-blue-400 ${
                         !isRead &&
                         "hover:bg-blue-400 hover:text-black cursor-pointer"

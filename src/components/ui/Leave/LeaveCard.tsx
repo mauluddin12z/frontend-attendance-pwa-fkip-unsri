@@ -4,6 +4,13 @@ import { useState } from "react";
 import Modal from "../Modal/Modal";
 import LoadingButton from "../Loading/LoadingButton";
 import IconDeleteButton from "../IconDeleteButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+   faClock,
+   faCheckCircle,
+   faTimesCircle,
+   faBan,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface LeaveCardProps extends LeaveRequest {
    onDelete?: () => void;
@@ -12,31 +19,31 @@ interface LeaveCardProps extends LeaveRequest {
 
 const STATUS_STYLES: Record<
    string,
-   { label: string; bg: string; text: string; border: string }
+   { label: string; bg: string; text: string; icon: any }
 > = {
    "menunggu persetujuan": {
       label: "Menunggu Persetujuan",
-      bg: "bg-blue-50",
+      bg: "bg-blue-50 text-blue-700",
       text: "text-blue-700",
-      border: "border-blue-200",
+      icon: faClock,
    },
    disetujui: {
       label: "Disetujui",
-      bg: "bg-green-50",
+      bg: "bg-green-50 text-green-700",
       text: "text-green-700",
-      border: "border-green-200",
+      icon: faCheckCircle,
    },
    ditolak: {
       label: "Ditolak",
-      bg: "bg-red-50",
+      bg: "bg-red-50 text-red-700",
       text: "text-red-700",
-      border: "border-red-200",
+      icon: faTimesCircle,
    },
    dibatalkan: {
       label: "Dibatalkan",
-      bg: "bg-amber-50",
-      text: "text-amber-700",
-      border: "border-amber-200",
+      bg: "bg-yellow-50 text-yellow-700",
+      text: "text-yellow-700",
+      icon: faBan,
    },
 };
 
@@ -53,82 +60,58 @@ const LeaveCard: React.FC<LeaveCardProps> = ({
    isDeleting,
 }) => {
    const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-   const statusInfo = (status && STATUS_STYLES[status.toLowerCase()]) || {
-      label: status || "Tidak diketahui",
-      bg: "bg-gray-50",
-      text: "text-gray-700",
-      border: "border-gray-200",
-   };
-
-   const handleDelete = () => {
-      if (onDelete) onDelete();
-      setShowDeleteModal(false);
-   };
+   const statusKey = status?.toLowerCase() ?? "unknown";
+   const statusInfo =
+      STATUS_STYLES[statusKey] || STATUS_STYLES["menunggu persetujuan"];
 
    return (
       <>
-         <div className="bg-white shadow-sm rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+         <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5">
             {/* Header */}
             <div className="flex justify-between items-center mb-3">
-               <div className="text-xs text-gray-500">
-                  Diajukan: {formatDateTime(createdAt)}
-               </div>
+               <p className="text-xs text-gray-500">
+                  {formatDateTime(createdAt)}
+               </p>
                <span
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${statusInfo.bg} ${statusInfo.text} ${statusInfo.border}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-full ${statusInfo.bg}`}
                >
+                  <FontAwesomeIcon icon={statusInfo.icon} />
                   {statusInfo.label}
                </span>
             </div>
 
-            {/* Content */}
+            {/* Body */}
             <div className="space-y-1 text-sm text-gray-700">
                <p>
-                  <span className="font-semibold text-gray-800">
-                     Jenis izin:
-                  </span>{" "}
-                  {leaveType || "-"}
+                  <span className="font-semibold">Jenis izin:</span> {leaveType}
                </p>
                <p>
-                  <span className="font-semibold text-gray-800">
-                     Dari tanggal:
-                  </span>{" "}
-                  {formatDate(startDate)}
-               </p>
-               <p>
-                  <span className="font-semibold text-gray-800">
-                     Sampai tanggal:
-                  </span>{" "}
+                  <span className="font-semibold">Dari:</span>{" "}
+                  {formatDate(startDate)} &nbsp;—&nbsp;
+                  <span className="font-semibold">Sampai:</span>{" "}
                   {formatDate(endDate)}
                </p>
                {reason && (
                   <p>
-                     <span className="font-semibold text-gray-800">
-                        Alasan:
-                     </span>{" "}
+                     <span className="font-semibold">Alasan:</span>{" "}
                      <span className="italic">{reason}</span>
                   </p>
                )}
                {approvalNotes && (
                   <p>
-                     <span className="font-semibold text-gray-800">
-                        Catatan Persetujuan:
-                     </span>{" "}
+                     <span className="font-semibold">Catatan:</span>{" "}
                      {approvalNotes}
                   </p>
                )}
                {approver?.fullName && (
                   <p>
-                     <span className="font-semibold text-gray-800">
-                        Disetujui oleh:
-                     </span>{" "}
+                     <span className="font-semibold">Disetujui oleh:</span>{" "}
                      {approver.fullName}
                   </p>
                )}
             </div>
 
-            {/* Delete button (for pending requests) */}
-            {status?.toLowerCase() === "menunggu persetujuan" && onDelete && (
+            {statusKey === "menunggu persetujuan" && onDelete && (
                <div className="mt-4">
                   <IconDeleteButton
                      action={() => setShowDeleteModal(true)}
@@ -138,7 +121,7 @@ const LeaveCard: React.FC<LeaveCardProps> = ({
             )}
          </div>
 
-         {/* Delete Confirmation Modal */}
+         {/* Modal */}
          {showDeleteModal && (
             <Modal
                isOpen={showDeleteModal}
@@ -152,11 +135,9 @@ const LeaveCard: React.FC<LeaveCardProps> = ({
                         Batal
                      </button>
                      <button
-                        onClick={handleDelete}
+                        onClick={onDelete}
                         disabled={isDeleting}
-                        className={`px-4 py-2 rounded-md text-white bg-red-600 hover:bg-red-700 transition ${
-                           isDeleting ? "opacity-60 cursor-not-allowed" : ""
-                        }`}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition disabled:opacity-60"
                      >
                         {isDeleting ? (
                            <LoadingButton label="Menghapus..." />

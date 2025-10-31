@@ -2,26 +2,36 @@ import { LeaveRequest } from "@/types";
 import LoadingSpinner from "../Loading/LoadingSpinner";
 import Link from "next/link";
 import customMoment from "@/utils/customMoment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+   faBan,
+   faCheckCircle,
+   faClock,
+   faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
-const statusMap: Record<string, { label: string; color: string }> = {
+const statusMap: Record<string, { label: string; color: string; icon: any }> = {
    "menunggu persetujuan": {
-      label: "Menunggu persetujuan",
-      color: "bg-gray-50 border border-gray-200 text-gray-700",
+      label: "Menunggu Persetujuan",
+      color: "bg-yellow-50 text-yellow-700 border border-yellow-300",
+      icon: faClock,
    },
    disetujui: {
       label: "Disetujui",
-      color: "bg-green-50 border border-green-200 text-green-700",
+      color: "bg-green-50 text-green-700 border border-green-300",
+      icon: faCheckCircle,
    },
    ditolak: {
       label: "Ditolak",
-      color: "bg-red-50 border border-red-200 text-red-700",
+      color: "bg-red-50 text-red-700 border border-red-300",
+      icon: faTimesCircle,
    },
    dibatalkan: {
       label: "Dibatalkan",
-      color: "bg-amber-50 border border-amber-200 text-amber-700",
+      color: "bg-gray-100 text-gray-600 border border-gray-300",
+      icon: faBan,
    },
 };
-
 interface LeaveRequestTableProps {
    leaveRequests: LeaveRequest[];
    leaveRequestLoading: boolean;
@@ -63,7 +73,6 @@ const LeaveRequestTable = ({
    };
 
    const finalColumnVisibility = { ...defaultVisibility, ...columnVisibility };
-
 
    return (
       <table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -113,12 +122,12 @@ const LeaveRequestTable = ({
                   </td>
                </tr>
             ) : (
-               leaveRequests?.map((leaveRequest) => {
-                  const statusKey =
-                     leaveRequest.status?.toLowerCase?.() || "unknown";
-                  const statusInfo = statusMap[statusKey] || {
+               leaveRequests.map((leaveRequest) => {
+                  const key = leaveRequest.status?.toLowerCase?.() || "unknown";
+                  const status = statusMap[key] || {
                      label: leaveRequest.status,
-                     color: "bg-gray-300 border text-gray-800",
+                     color: "bg-gray-200 text-gray-700 border",
+                     icon: faClock,
                   };
 
                   return (
@@ -172,33 +181,39 @@ const LeaveRequestTable = ({
                         )}
 
                         {finalColumnVisibility.status && (
-                           <td className="px-6 py-4 relative">
-                              <div className="flex flex-col w-fit items-center">
-                                 <span className={`px-3 w-fit py-1 rounded-full text-xs font-medium text-nowrap focus:outline-none ${statusInfo.color}`}>
-                                    {leaveRequest.status || "---"}
-                                 </span>
-                                 {leaveRequest.status ===
-                                    "menunggu persetujuan" && (
-                                    <div className="flex gap-x-2 mt-2">
-                                       <div
-                                          onClick={() =>
-                                             openModal(leaveRequest, "approve")
-                                          }
-                                          className="text-green-400 text-xs hover:underline cursor-pointer border border-green-400 px-2.5 py-0.5"
-                                       >
-                                          setujui
-                                       </div>
-                                       <div
-                                          onClick={() =>
-                                             openModal(leaveRequest, "reject")
-                                          }
-                                          className="text-red-400 text-xs hover:underline cursor-pointer border border-red-400 px-2.5 py-0.5"
-                                       >
-                                          tolak
-                                       </div>
-                                    </div>
-                                 )}
+                           <td className="px-6 py-3">
+                              <div
+                                 className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${status.color}`}
+                                 title={status.label}
+                              >
+                                 <FontAwesomeIcon
+                                    icon={status.icon}
+                                    className="w-3 h-3"
+                                 />
+                                 <span>{status.label}</span>
                               </div>
+
+                              {leaveRequest.status ===
+                                 "menunggu persetujuan" && (
+                                 <div className="flex gap-2 mt-2 text-xs">
+                                    <button
+                                       onClick={() =>
+                                          openModal(leaveRequest, "approve")
+                                       }
+                                       className="text-green-600 border border-green-400 px-2 py-0.5 rounded hover:bg-green-50 cursor-pointer"
+                                    >
+                                       Setujui
+                                    </button>
+                                    <button
+                                       onClick={() =>
+                                          openModal(leaveRequest, "reject")
+                                       }
+                                       className="text-red-600 border border-red-400 px-2 py-0.5 rounded hover:bg-red-50 cursor-pointer"
+                                    >
+                                       Tolak
+                                    </button>
+                                 </div>
+                              )}
                            </td>
                         )}
 

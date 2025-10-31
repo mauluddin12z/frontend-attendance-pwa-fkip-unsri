@@ -78,16 +78,21 @@ export default function LeaveAllPage() {
    };
 
    return (
-      <>
+      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-gray-50 via-white to-blue-50 pb-10">
          {/* Header */}
-         <HeaderTitle
-            title="Semua Pengajuan Izin"
-            showBackButton={true}
-            navigateTo="/me/izin"
-            className="px-4 pt-6"
-         />
+         <section className="flex flex-col gap-x-2 pt-8 px-6">
+            <HeaderTitle
+               title="Semua Pengajuan Izin"
+               showBackButton={true}
+               navigateTo="/me/izin"
+               backButtonBgColor="border border-gray-200"
+            />
+            <p className="mt-4 text-sm text-gray-600">
+               Lihat dan kelola seluruh riwayat pengajuan izin Anda
+            </p>
+         </section>
 
-         <section className="px-4 mt-6">
+         <section className="px-4 mt-8">
             <div className="font-semibold mb-2">Riwayat Pengajuan Izin</div>
             <LeaveRequestFilter
                activeFilter={activeFilter}
@@ -101,7 +106,7 @@ export default function LeaveAllPage() {
          </section>
 
          {/* Pagination Section */}
-         <section className="mt-2">
+         <section className="mt-6">
             <Pagination
                currentPage={page}
                hasNextPage={filteredRequests?.pagination?.hasNextPage || false}
@@ -110,6 +115,6 @@ export default function LeaveAllPage() {
                isLoading={isLoading}
             />
          </section>
-      </>
+      </div>
    );
 }

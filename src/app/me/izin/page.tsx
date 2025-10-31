@@ -1,4 +1,5 @@
 "use client";
+
 import LeaveDashboardCard from "@/components/ui/Leave/LeaveDashboardCard";
 import LeaveRequestFilter, {
    LeaveFilterType,
@@ -20,7 +21,6 @@ export default function LeaveDashboardPage() {
    );
    const [activeFilter, setActiveFilter] = useState<LeaveFilterType>("semua");
 
-   // Function to get filtered leave requests based on filter type
    const getFilteredRequests = () => {
       switch (activeFilter) {
          case "semua":
@@ -60,51 +60,66 @@ export default function LeaveDashboardPage() {
    };
 
    return (
-      <>
+      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-blue-50 via-white to-blue-100 pb-10">
          {/* Header */}
-         <section className="flex justify-between items-center px-4 pt-6">
-            <HeaderTitle title="Pengajuan Izin" />
+         <section className="flex justify-between items-center px-6 pt-8 pb-4 border-b border-gray-200 bg-white/70 backdrop-blur-sm">
+            <HeaderTitle title="Pengajuan Izin" className="text-gray-900" />
             <button
                onClick={() => router.push("/me/izin/add")}
-               className="p-2 rounded-lg border bg-white border-gray-200 text-gray-600 hover:bg-gray-100 focus:bg-gray-100 transition"
+               className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 bg-white text-black font-medium rounded-lg hover:bg-gray-200 shadow-sm hover:shadow-lg transition-all"
             >
                <FontAwesomeIcon icon={faPlus} />
+               <span className="hidden sm:inline">Buat Pengajuan</span>
             </button>
          </section>
 
-         <section className="px-4 mt-6 grid grid-cols-2 gap-4">
+         {/* Dashboard Cards */}
+         <section className="px-6 mt-8 grid grid-cols-2 sm:grid-cols-4 gap-5">
             <LeaveDashboardCard
                count={all.userLeaveRequests?.pagination?.totalItems || 0}
                label="Total Izin"
+               gradient="from-blue-400 to-indigo-600"
             />
             <LeaveDashboardCard
                count={approved.userLeaveRequests?.pagination?.totalItems || 0}
                label="Disetujui"
+               gradient="from-green-400 to-emerald-600"
             />
             <LeaveDashboardCard
                count={rejected.userLeaveRequests?.pagination?.totalItems || 0}
                label="Ditolak"
+               gradient="from-red-400 to-rose-600"
             />
             <LeaveDashboardCard
                count={cancelled.userLeaveRequests?.pagination?.totalItems || 0}
                label="Dibatalkan"
+               gradient="from-amber-400 to-yellow-600"
             />
          </section>
 
-         <section className="px-4 my-6">
-            <div className="font-semibold mb-2">Riwayat Pengajuan Izin</div>
+         {/* Leave History */}
+         <section className="px-6 mt-12">
+            <div className="flex justify-between items-center mb-4">
+               <h2 className="font-semibold text-gray-800 text-lg">
+                  Riwayat Pengajuan Izin
+               </h2>
+            </div>
+
             <LeaveRequestFilter
                activeFilter={activeFilter}
                onChange={setActiveFilter}
             />
-            <LeaveRequestList
-               requests={filteredRequests?.data || []}
-               isLoading={all.isLoading}
-               showLimit={3}
-               onViewAll={() => router.push("/me/izin/all")}
-               refetchAll={refetchAll}
-            />
+
+            <div className="mt-6">
+               <LeaveRequestList
+                  requests={filteredRequests?.data || []}
+                  isLoading={all.isLoading}
+                  showLimit={3}
+                  onViewAll={() => router.push("/me/izin/all")}
+                  refetchAll={refetchAll}
+               />
+            </div>
          </section>
-      </>
+      </div>
    );
 }

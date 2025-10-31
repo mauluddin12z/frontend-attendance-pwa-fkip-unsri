@@ -54,7 +54,7 @@ export default function AdminSidebar({
             <li className="relative group">
                <button
                   onClick={openLogoutModal}
-                  className="flex flex-col justify-center items-center w-full gap-y-2 p-2 text-gray-900 rounded-lg hover:bg-gray-100 cursor-pointer aspect-square"
+                  className="flex flex-col justify-center items-center w-full gap-y-2 p-2 text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer aspect-square"
                   aria-label="Logout"
                >
                   <FontAwesomeIcon icon={faSignOut} />

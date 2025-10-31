@@ -39,7 +39,7 @@ export default function Page() {
          startDate: start.format("YYYY-MM-DD"),
          endDate: end.format("YYYY-MM-DD"),
          include: "details,status",
-         size:31
+         size: 31,
       };
    }, [currentDate]);
 
@@ -92,19 +92,22 @@ export default function Page() {
    }, [filter, daysInMonth, getAttendanceForDay]);
 
    return (
-      <>
+      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-sky-50 via-white to-indigo-50 pb-10">
          {/* Header */}
-         <HeaderTitle title="Absensi" className="px-4 pt-6" />
-
-         {/* Monthly Attendance Title and ViewType Toggle */}
-         <section className="mt-2 px-4 flex justify-between items-center">
-            <h2 className="font-semibold text-base">Absensi Bulanan</h2>
-            <ViewTypeToggle viewType={viewType} setViewType={setViewType} />
+         <section className="flex flex-col gap-x-2 pt-8 px-6">
+            <div className="flex justify-between items-center">
+               <HeaderTitle title="Absensi" />{" "}
+               <ViewTypeToggle viewType={viewType} setViewType={setViewType} />
+            </div>
+            <p className="mt-4 text-sm text-gray-600">
+               Pantau kehadiran Anda setiap hari dan kelola data absensi
+               bulanan.
+            </p>
          </section>
 
          {/* Main Content */}
          <section className="mt-4 px-4">
-            <div className="rounded-2xl bg-white overflow-clip py-6">
+            <div className="rounded-2xl bg-white overflow-clip py-6 shadow-sm border border-gray-200">
                {/* Calendar Header */}
                <section className="px-4">
                   <div className="flex flex-col bg-white border border-gray-200 rounded-lg">
@@ -145,6 +148,6 @@ export default function Page() {
                </section>
             </div>
          </section>
-      </>
+      </div>
    );
 }

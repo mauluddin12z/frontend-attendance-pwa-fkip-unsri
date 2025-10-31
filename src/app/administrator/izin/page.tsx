@@ -121,25 +121,23 @@ export default function Page() {
       defaultValues: leaveRequestDefaultValues,
    });
 
-   useEffect(() => {
-      if (selectedLeaveRequest) {
-         setSelectedUser(selectedLeaveRequest?.leaveUser || null);
-         reset({
-            userId: selectedLeaveRequest?.userId?.toString() ?? "",
-            startDate: selectedLeaveRequest?.startDate ?? "",
-            endDate: selectedLeaveRequest?.endDate ?? "",
-            leaveType: selectedLeaveRequest?.leaveType ?? "",
-            status: selectedLeaveRequest?.status ?? "",
-            reason: selectedLeaveRequest?.reason ?? "",
-         });
-      }
-   }, [selectedLeaveRequest, reset]);
-
    // Modal Management Hooks
    const { modalState, openModal, closeModal } = useAdministratorModal(
       setSelectedLeaveRequest,
       () => reset(leaveRequestDefaultValues)
    );
+
+   useEffect(() => {
+      setSelectedUser(selectedLeaveRequest?.leaveUser || null);
+      reset({
+         userId: selectedLeaveRequest?.userId?.toString() ?? "",
+         startDate: selectedLeaveRequest?.startDate ?? "",
+         endDate: selectedLeaveRequest?.endDate ?? "",
+         leaveType: selectedLeaveRequest?.leaveType ?? "",
+         status: selectedLeaveRequest?.status ?? "",
+         reason: selectedLeaveRequest?.reason ?? "",
+      });
+   }, [selectedLeaveRequest, modalState, reset]);
 
    // Attendance Actions (Create, Update, Delete)
    const {

@@ -135,7 +135,7 @@ export default function Page() {
    };
 
    return (
-      <div className="px-4">
+      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-b from-gray-50 to-white flex flex-col py-4 px-6 sm:px-8">
          <HeaderTitle
             title="Update Profile"
             showBackButton={true}

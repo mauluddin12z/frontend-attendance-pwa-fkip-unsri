@@ -23,7 +23,7 @@ const LeaveRequestList: React.FC<Props> = ({
    const { deleteLeaveRequest, isDeleting } = useDeleteLeaveRequest();
 
    const handleDelete = async (id: number) => {
-      const toastId = toast.loading("Menghapus...");
+      const toastId = toast.loading("Menghapus pengajuan...");
       try {
          await deleteLeaveRequest(id);
          await refetchAll();
@@ -36,39 +36,45 @@ const LeaveRequestList: React.FC<Props> = ({
    const visibleRequests = showLimit ? requests.slice(0, showLimit) : requests;
 
    return (
-      <>
+      <div className="mt-4">
          {isLoading ? (
-            <div className="flex justify-center">
+            <div className="flex justify-center py-10">
                <LoadingSpinner />
             </div>
          ) : requests.length === 0 ? (
-            <p className="text-gray-500 text-center text-sm">
-               Tidak ada data pengajuan izin.
-            </p>
+            <div className="text-center py-10 text-gray-500 text-sm animate-fadeIn">
+               <p className="mb-2">📭 Tidak ada pengajuan izin.</p>
+               <p>
+                  Klik tombol <strong>Buat Pengajuan</strong> untuk menambah
+                  data.
+               </p>
+            </div>
          ) : (
-            <div className="space-y-4">
-               {visibleRequests.map((request) => (
-                  <LeaveCard
-                     key={request.id}
-                     {...request}
-                     onDelete={() => handleDelete(request.id)}
-                     isDeleting={isDeleting}
-                  />
-               ))}
+            <>
+               <div className="space-y-5 animate-fadeIn">
+                  {visibleRequests.map((request) => (
+                     <LeaveCard
+                        key={request.id}
+                        {...request}
+                        onDelete={() => handleDelete(request.id)}
+                        isDeleting={isDeleting}
+                     />
+                  ))}
+               </div>
 
                {showLimit && requests.length > showLimit && onViewAll && (
-                  <div className="flex justify-center">
+                  <div className="flex justify-center mt-8">
                      <button
                         onClick={onViewAll}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm hover:shadow-md transition-all"
                      >
                         Lihat Semua
                      </button>
                   </div>
                )}
-            </div>
+            </>
          )}
-      </>
+      </div>
    );
 };
 

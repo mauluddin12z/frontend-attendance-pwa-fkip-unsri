@@ -18,8 +18,8 @@ const getStatusStyle = (status?: string): string => {
       status in attendanceStatusStyle;
 
    return status && isValidStatus(status)
-      ? `${attendanceStatusStyle[status].bgColor} ${attendanceStatusStyle[status].borderColor}`
-      : "bg-gray-100 border-gray-300";
+      ? `${attendanceStatusStyle[status].borderColor} ${attendanceStatusStyle[status].bgColor} ${attendanceStatusStyle[status].textColor}`
+      : "bg-gray-50 border-gray-300 text-gray-700";
 };
 
 const AttendanceListCard: React.FC<AttendanceListCardProps> = ({
@@ -48,7 +48,7 @@ const AttendanceListCard: React.FC<AttendanceListCardProps> = ({
                {customMoment(day).format("D MMMM YYYY")}
             </span>
             <span
-               className={`font-medium text-xs text-gray-700 py-1 px-4 border-2 rounded-full lowercase ${statusStyle}`}
+               className={`font-medium text-xs py-1 px-4 border-2 rounded-full lowercase ${statusStyle}`}
             >
                {statusName}
             </span>

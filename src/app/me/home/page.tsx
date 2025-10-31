@@ -111,11 +111,9 @@ const Page = () => {
    const { userNotifications } = useNotificationByUser(userId, { read: 0 });
 
    return (
-      <>
+      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-blue-50 via-white to-blue-100 pb-10">
          {/* Top Section */}
-         <div className="bg-blue-500 pb-12 flex flex-col relative z-[11] rounded-bl-lg rounded-br-lg">
-            <div className="absolute w-64 aspect-square rounded-full top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-blue-100/10 z-10 blur-3xl" />
-
+         <div className="bg-blue-500 pb-12 flex flex-col z-[11] rounded-bl-lg rounded-br-lg">
             <section className="mb-2 z-[10] mt-2">
                <div className="flex justify-between px-4 pt-2.5 pb-2 h-20">
                   <LocationInfo
@@ -221,7 +219,7 @@ const Page = () => {
                )}
             </section>
          </div>
-      </>
+      </div>
    );
 };
 

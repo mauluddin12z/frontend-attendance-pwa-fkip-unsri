@@ -49,8 +49,8 @@ const AttendanceTable = ({
          status in attendanceStatusStyle;
 
       return isValidStatus(status)
-         ? `${attendanceStatusStyle[status].borderColor} ${attendanceStatusStyle[status].bgColor}`
-         : `${attendanceStatusStyle.Lainnya.borderColor} ${attendanceStatusStyle.Lainnya.bgColor}`;
+         ? `${attendanceStatusStyle[status].borderColor} ${attendanceStatusStyle[status].bgColor} ${attendanceStatusStyle[status].textColor}`
+         : `${attendanceStatusStyle.Lainnya.borderColor} ${attendanceStatusStyle.Lainnya.bgColor} ${attendanceStatusStyle.Lainnya.textColor}`;
    };
 
    return (
