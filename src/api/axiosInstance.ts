@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { logout, refreshAccessToken } from "./auth";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_MY_BACKEND_URL as string;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 const axiosInstance = axios.create({
    baseURL: API_BASE_URL,

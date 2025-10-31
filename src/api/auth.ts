@@ -3,7 +3,7 @@ import axiosInstance from "./axiosInstance";
 import toast from "react-hot-toast";
 import { handleApiError } from "@/utils/handleApiError";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_MY_BACKEND_URL as string;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 export const refreshAccessToken = async (): Promise<string | null> => {
    try {
@@ -32,7 +32,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 export const login = async (username: string, password: string) => {
    try {
       const response = await axios.post(
-         `${process.env.NEXT_PUBLIC_MY_BACKEND_URL}/auth/login`,
+         `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
          { username, password },
          { withCredentials: true }
       );
