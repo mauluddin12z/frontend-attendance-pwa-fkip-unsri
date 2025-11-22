@@ -70,7 +70,7 @@ export default function Page() {
                }
                openModalFilter={() => openModal(undefined, "filter")}
                openModalAdd={() => {}}
-               columnVisibility={{ search: false }}
+               columnVisibility={{ search: false, add: false }}
             />
 
             <div className="relative overflow-x-auto sm:rounded-lg">
