@@ -1,9 +1,10 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { faExchangeAlt, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import SidebarLink from "@/components/ui/SidebarLink";
 import LogoutModal from "@/components/ui/Modal/LogoutModal";
+import Link from "next/link";
 interface AdminSidebarProps {
    onLogout: () => void;
 }
@@ -54,7 +55,7 @@ export default function AdminSidebar({
             <li className="relative group">
                <button
                   onClick={openLogoutModal}
-                  className="flex flex-col justify-center items-center w-full gap-y-2 p-2 text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer aspect-square"
+                  className="flex flex-col justify-center items-center w-full gap-y-2 text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer aspect-square"
                   aria-label="Logout"
                >
                   <FontAwesomeIcon icon={faSignOut} />
@@ -64,6 +65,20 @@ export default function AdminSidebar({
                      Logout
                   </div>
                </button>
+            </li>
+            <li className="relative group">
+               <Link
+                  href={"/me/home"}
+                  className="flex flex-col justify-center items-center w-full gap-y-2 text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer aspect-square"
+                  aria-label="Logout"
+               >
+                  <FontAwesomeIcon icon={faExchangeAlt} />
+                  <div
+                     className={`absolute top-0 -right-2 translate-x-full text-nowrap bg-white shadow-lg px-2.5 rounded-lg text-sm py-1 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none`}
+                  >
+                     Ubah Ke Mode User
+                  </div>
+               </Link>
             </li>
          </ul>
 

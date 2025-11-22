@@ -20,7 +20,7 @@ function SidebarLink({
       <li className="relative group">
          <Link
             href={href}
-            className="flex flex-col justify-center items-center p-2 bg-white hover:bg-gray-100 transition duration-200 rounded-lg"
+            className="flex flex-col justify-center items-center p-2 bg-white hover:bg-gray-100 transition duration-200 rounded-lg aspect-square"
             aria-label={label}
          >
             <div className="w-6 h-6 mb-2">

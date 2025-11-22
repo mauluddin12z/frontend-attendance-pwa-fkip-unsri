@@ -111,7 +111,7 @@ const Page = () => {
    const { userNotifications } = useNotificationByUser(userId, { read: 0 });
 
    return (
-      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-blue-50 via-white to-blue-100 pb-10">
+      <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-blue-50 via-white to-blue-100 pb-6">
          {/* Top Section */}
          <div className="bg-blue-500 pb-12 flex flex-col z-[11] rounded-bl-lg rounded-br-lg">
             <section className="mb-2 z-[10] mt-2">
@@ -123,7 +123,7 @@ const Page = () => {
                   <Link
                      href="/me/notifikasi"
                      aria-label="Notifications"
-                     className="relative flex items-center justify-center w-10 h-10 p-2 text-white bg-blue-300 rounded-lg transition hover:bg-blue-500"
+                     className="relative flex items-center justify-center w-10 h-10 p-2 text-white bg-blue-300 rounded-lg transition hover:bg-blue-400"
                   >
                      {/* Notification indicator */}
                      {userNotifications?.data?.length > 0 && (

@@ -66,7 +66,7 @@ export default function LeaveDashboardPage() {
             <HeaderTitle title="Pengajuan Izin" className="text-gray-900" />
             <button
                onClick={() => router.push("/me/izin/add")}
-               className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 bg-white text-black font-medium rounded-lg hover:bg-gray-200 shadow-sm hover:shadow-lg transition-all"
+               className="flex items-center gap-2 px-2.5 py-2.5 border border-gray-200 bg-white text-black font-medium rounded-lg hover:bg-gray-200 transition-all"
             >
                <FontAwesomeIcon icon={faPlus} />
                <span className="hidden sm:inline">Buat Pengajuan</span>
