@@ -1,6 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import getPageNumbers from "@/utils/getPageNumbers";
 
 interface PaginationPropsInterface {
    totalPages: number;
@@ -17,10 +18,8 @@ export default function Pagination({
    isLoading,
    onPageChange,
 }: Readonly<PaginationPropsInterface>) {
-   const pageNumbers = Array.from(
-      { length: totalPages },
-      (_, index) => index + 1
-   );
+   const pageNumbers = getPageNumbers(currentPage, totalPages, 3);
+   console.log(pageNumbers);
    const handlePageChange = (page: number) => {
       if (isLoading || page === currentPage) return;
       onPageChange(page);
@@ -83,21 +82,29 @@ export default function Pagination({
             </li>
 
             {/* Page Numbers */}
-            {pageNumbers.map((page) => (
-               <li key={page}>
-                  <button
-                     className={`${
-                        currentPage === page
-                           ? "text-white border border-gray-300 bg-blue-500"
-                           : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                     } px-3 py-2 leading-tight`}
-                     onClick={() => handlePageChange(page)}
-                     disabled={isLoading}
+            {pageNumbers.map((page, idx) =>
+               typeof page === "number" ? (
+                  <li key={idx}>
+                     <button
+                        className={`${
+                           currentPage === page
+                              ? "text-white border border-gray-300 bg-blue-500"
+                              : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
+                        } px-3 py-2 leading-tight`}
+                        onClick={() => handlePageChange(page)}
+                     >
+                        {page}
+                     </button>
+                  </li>
+               ) : (
+                  <li
+                     key={idx}
+                     className="px-3 py-2 leading-tight text-gray-500 cursor-default"
                   >
                      {page}
-                  </button>
-               </li>
-            ))}
+                  </li>
+               )
+            )}
 
             {/* Next Page */}
             <li>
