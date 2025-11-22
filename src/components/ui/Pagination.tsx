@@ -19,7 +19,6 @@ export default function Pagination({
    onPageChange,
 }: Readonly<PaginationPropsInterface>) {
    const pageNumbers = getPageNumbers(currentPage, totalPages, 3);
-   console.log(pageNumbers);
    const handlePageChange = (page: number) => {
       if (isLoading || page === currentPage) return;
       onPageChange(page);

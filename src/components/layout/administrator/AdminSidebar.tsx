@@ -38,7 +38,7 @@ export default function AdminSidebar({
    };
 
    return (
-      <aside className="fixed left-0 z-48 w-20 h-full bg-white border border-gray-200 sm:px-3 sm:py-4 px-1 py-2">
+      <aside className="fixed left-0 z-48 w-20 h-full bg-white border border-gray-200 sm:px-3 sm:py-4 px-1 py-2 overflow-y-auto">
          <ul className="space-y-4 font-medium text-sm">
             {sidebarLinks.map(({ href, label, icon }) => {
                const isActive = pathname === href;
