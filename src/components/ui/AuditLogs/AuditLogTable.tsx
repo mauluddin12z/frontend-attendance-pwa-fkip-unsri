@@ -6,7 +6,10 @@ import Link from "next/link";
 interface AuditLogTableProps {
    auditLogs: AuditLog[];
    auditLogLoading: boolean;
-   openModal: (auditLog: AuditLog, action: "detail" | "edit" | "delete") => void;
+   openModal: (
+      auditLog: AuditLog,
+      action: "detail" | "edit" | "delete"
+   ) => void;
    columnVisibility?: {
       id?: boolean;
       user?: boolean;
@@ -75,11 +78,17 @@ const AuditLogTable = ({
                      )}
                      {finalColumnVisibility.user && (
                         <td className="px-6 py-4">
-                           <Link href={`/administrator/logs/${log.user?.nip}`}>
-                              <span className="hover:underline font-semibold">
-                                 {log.user?.fullName || "---"}
-                              </span>
-                           </Link>
+                           {log.user ? (
+                              <Link
+                                 href={`/administrator/logs/${log.user?.nip}`}
+                              >
+                                 <span className="hover:underline font-semibold">
+                                    {log.user?.fullName}
+                                 </span>
+                              </Link>
+                           ) : (
+                              <p>---</p>
+                           )}
                         </td>
                      )}
                      {finalColumnVisibility.action && (

@@ -117,7 +117,7 @@ export default function NotificationPage() {
    return (
       <div className="bg-white min-h-[calc(100vh-5rem)] flex flex-col py-2">
          {/* Header */}
-         <div className="flex justify-between items-center px-4 pt-6">
+         <div className="flex justify-between items-center px-4 pt-2">
             <HeaderTitle
                title="Notifikasi"
                showBackButton={true}
