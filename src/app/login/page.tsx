@@ -33,7 +33,7 @@ export default function Page() {
          });
 
          // Redirect to home (based on device)
-         router.push(isMobile ? "/me/home" : "/home");
+         router.push(isMobile ? "/me/home" : "/administrator/dashboard");
       } catch (error: any) {
          if (Array.isArray(error?.details)) {
             mapJoiErrorsToForm(error.details, setError, [
