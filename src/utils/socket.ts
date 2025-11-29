@@ -6,7 +6,7 @@ let socket: Socket | null = null;
 export const initSocket = (userId: string): Socket => {
    if (!socket) {
       socket = io(
-         process.env.NEXT_PUBLIC_API_URL || "http://192.168.0.105:5000",
+         process.env.NEXT_PUBLIC_SOCKET_URL || "http://192.168.0.105:5000",
          {
             path: "/api/socket.io/",
          }
