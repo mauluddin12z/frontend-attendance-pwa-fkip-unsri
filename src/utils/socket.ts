@@ -8,8 +8,6 @@ export const initSocket = (userId: string): Socket => {
       socket = io(
          process.env.NEXT_PUBLIC_SOCKET_URL || "http://192.168.0.105:5000",
          {
-            path: "/api/socket.io/",
-            transports: ["websocket", "polling"],
             autoConnect: false,
          }
       );
