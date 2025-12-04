@@ -46,6 +46,7 @@ export default function useUserAction(
                   confirmPassword,
                   roleId,
                   isActive,
+                  deviceId
                } = data;
 
                formData = createFormData({
@@ -57,6 +58,7 @@ export default function useUserAction(
                   confirmPassword,
                   roleId,
                   isActive,
+                  deviceId,
                });
             } else {
                toast.error("Data pengguna tidak terdefinisi.", { id: toastId });
@@ -101,16 +103,20 @@ export default function useUserAction(
       confirmPassword,
       roleId,
       isActive,
+      deviceId,
    }: UserForm) => {
       const formData = new FormData();
       formData.append("fullName", fullName!);
       formData.append("nip", nip!);
       formData.append("email", email!);
       formData.append("phoneNumber", phoneNumber!);
-      formData.append("password", password!);
-      formData.append("confirmPassword", confirmPassword!);
+      if (password) {
+         formData.append("password", password!);
+         formData.append("confirmPassword", confirmPassword!);
+      }
       formData.append("roleId", roleId!);
       formData.append("isActive", isActive!);
+      formData.append("deviceId", deviceId!);
       return formData;
    };
 
@@ -125,6 +131,7 @@ export default function useUserAction(
             "password",
             "roleId",
             "isActive",
+            "deviceId",
          ]);
          toast.error("Mohon perbaiki kesalahan yang ditandai.", {
             id: toastId,

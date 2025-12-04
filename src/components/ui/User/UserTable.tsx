@@ -32,6 +32,7 @@ const UserTable = ({
       password: false,
       role: true,
       action: true,
+      deviceId: true,
    };
 
    const finalColumnVisibility = { ...defaultVisibility, ...columnVisibility };
@@ -56,6 +57,9 @@ const UserTable = ({
                )}
                {finalColumnVisibility.role && (
                   <th className="px-6 py-3">Role</th>
+               )}
+               {finalColumnVisibility.deviceId && (
+                  <th className="px-6 py-3">DeviceId</th>
                )}
                {finalColumnVisibility.action && (
                   <th className="px-6 py-3 text-center">Aksi</th>
@@ -98,6 +102,9 @@ const UserTable = ({
                      )}
                      {finalColumnVisibility.role && (
                         <td className="px-6 py-4">{user.role.name}</td>
+                     )}
+                     {finalColumnVisibility.deviceId && (
+                        <td className="px-6 py-4"> <div className="truncate w-48">{user.deviceId}</div></td>
                      )}
                      <td className="px-6 py-4 text-center">
                         <div className="flex justify-center items-center gap-2">

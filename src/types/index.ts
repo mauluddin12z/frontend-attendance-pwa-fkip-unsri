@@ -12,6 +12,7 @@ export interface User {
    isActive: number;
    roleId: number;
    role: Role;
+   deviceId?:string
 }
 export interface Role {
    id: number;
@@ -163,6 +164,7 @@ export interface UserForm {
    password?: string;
    confirmPassword?: string;
    isActive?: string;
+   deviceId?:string
 }
 
 // Types

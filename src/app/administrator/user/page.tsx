@@ -55,12 +55,14 @@ export default function Page() {
       password: "",
       confirmPassword: "",
       isActive: "",
+      deviceId: "",
    };
 
    // Form handling for user add/edit
    const {
       register,
       watch,
+      setValue,
       control,
       handleSubmit,
       setError,
@@ -82,6 +84,7 @@ export default function Page() {
          password: "",
          confirmPassword: "",
          isActive: selectedUser?.isActive?.toString() ?? "",
+         deviceId: selectedUser?.deviceId?.toString() ?? "",
       });
    }, [selectedUser, reset]);
 
@@ -145,6 +148,7 @@ export default function Page() {
             roleLoading={roleLoading}
             errors={errors}
             register={register}
+            setValue={setValue}
             control={control}
             watch={watch}
          />

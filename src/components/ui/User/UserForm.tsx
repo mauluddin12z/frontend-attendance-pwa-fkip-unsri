@@ -2,13 +2,19 @@ import React from "react";
 import { Role } from "@/types";
 import FormField from "../Form/FormField";
 import { SelectField } from "../Form/SelectField";
-import { Control, UseFormRegister, UseFormWatch } from "react-hook-form";
+import {
+   Control,
+   UseFormRegister,
+   UseFormSetValue,
+   UseFormWatch,
+} from "react-hook-form";
 
 interface UserFormProps {
    formType: string;
    errors: any;
    register: UseFormRegister<any>;
    watch: UseFormWatch<any>;
+   setValue?: UseFormSetValue<any>;
    control: Control<any>;
    roles: Role[];
    roleLoading: boolean;
@@ -18,6 +24,7 @@ const UserForm = ({
    formType,
    register,
    control,
+   setValue,
    watch,
    errors,
    roles,
@@ -116,6 +123,45 @@ const UserForm = ({
                { value: "false", label: "Tidak Aktif" },
             ]}
          />
+
+         {/* deviceId */}
+         {formType === "edit" && (
+            <>
+               <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor={register.name}
+               >
+                  DeviceId
+               </label>
+               <div className="flex gap-x-2">
+                  <input
+                     id={register.name}
+                     type="text"
+                     placeholder="Device ID belum terdaftar"
+                     {...register("deviceId")}
+                     disabled
+                     className={`w-full border px-3 py-2 rounded-md bg-gray-200 border-gray-300 text-gray-600`}
+                  />
+                  {/* Reset Button */}
+                  <button
+                     type="button"
+                     onClick={() => setValue?.("deviceId", "")}
+                     className={`h-10 px-4 text-white rounded-md ${
+                        watch("deviceId")
+                           ? "cursor-pointer bg-red-500 hover:bg-red-600"
+                           : "bg-red-300"
+                     }`}
+                  >
+                     Reset
+                  </button>
+               </div>
+               {errors.deviceId?.message && (
+                  <p className="text-red-500 text-sm mt-1">
+                     {errors.deviceId?.message}
+                  </p>
+               )}
+            </>
+         )}
       </form>
    );
 };

@@ -24,7 +24,7 @@ export function useHandleCheck<T>({
    const [isLoading, setIsLoading] = useState(false);
 
    const handleCheck = async () => {
-      const toastId = toast.loading(loadingMessage);
+      const toastId = toast.loading(loadingMessage, { duration: 5000 });
 
       try {
          const position = await getGeolocation();

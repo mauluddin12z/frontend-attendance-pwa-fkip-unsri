@@ -7,6 +7,7 @@ import {
    Control,
    UseFormHandleSubmit,
    UseFormRegister,
+   UseFormSetValue,
    UseFormWatch,
 } from "react-hook-form";
 import { Role, User } from "@/types";
@@ -28,6 +29,7 @@ interface UserModalsProps {
    errors: any;
    register: UseFormRegister<any>;
    watch?: UseFormWatch<any>;
+   setValue?:UseFormSetValue<any>;
    control: Control<any>;
 }
 
@@ -47,6 +49,7 @@ const UserModals = ({
    roleLoading,
    errors,
    register,
+   setValue,
    watch,
    control,
 }: UserModalsProps) => {
@@ -95,6 +98,7 @@ const UserModals = ({
                   watch={watch!}
                   errors={errors}
                   register={register}
+                  setValue={setValue}
                   roleLoading={roleLoading}
                   roles={roles}
                />
