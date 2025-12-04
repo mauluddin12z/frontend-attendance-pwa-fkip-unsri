@@ -12,9 +12,12 @@ const getDotClass = (status?: string): string => {
    const isValidStatus = (status: string): status is AttendanceStatusName =>
       status in attendanceStatusStyle;
 
-   return status && isValidStatus(status)
+   if (!status) return "";
+
+   // If valid, return its style. If not valid, return "Lainnya" style.
+   return isValidStatus(status)
       ? attendanceStatusStyle[status].dotColor
-      : "";
+      : attendanceStatusStyle["Lainnya"].dotColor;
 };
 
 type AttendanceGridCardProps = {
